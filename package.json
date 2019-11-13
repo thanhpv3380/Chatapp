@@ -2,6 +2,9 @@
   "name": "$name$",
   "version": "$version$",
   "dependencies": {
-    $END$
+    "mongoose": "*",
+    "uniqid": "*",
+    "express": "*",
+    "body-parser": "*"
   }
 }

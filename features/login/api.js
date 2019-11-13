@@ -1,12 +1,12 @@
-const app=require("../../models/web").app
+const router=require("express").Router()
 
 
 const user = require('../../models/mongodb/User');
 
 
-app.route('/')
+router.route('/')
     .get((req, res) => {
-        res.sendFile(__dirname + "/views/trangchu.html");
+        res.sendFile(__dirname + "/frontend/trangchu.html");
     })
     .post(function (req, res) {
         var usernameLogin = req.body.usernameLogin;
@@ -28,7 +28,7 @@ app.route('/')
         })
     })
 
-    app.route('/resgister')
+    router.route('/resgister')
     .post(function (req, res) {
           var username = req.body.username;
           var password = req.body.password;
@@ -68,7 +68,7 @@ app.route('/')
                 }
           })      
     })
-    app.get('/resgister/:username', (req, res) =>{
+    router.get('/resgister/:username', (req, res) =>{
         var username = req.params.username;
         user.CheckUsername(username, function(dataResult){
             if(dataResult == false){
@@ -83,4 +83,4 @@ app.route('/')
         })
     })
 
-app.listen()
+module.exports=router

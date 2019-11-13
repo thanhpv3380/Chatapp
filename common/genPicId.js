@@ -1,5 +1,5 @@
 var uniqid = require('uniqid');
-var genPicId = (type, ownerId)=>{
+var genPicId = (ownerId)=>{
     /*
     input : type, icon: String
                 type: "avatar", ownerId: userId,
@@ -12,4 +12,4 @@ var genPicId = (type, ownerId)=>{
     return id
 }
 
-module.exports={genPicId}
+module.exports=genPicId
