@@ -1,6 +1,13 @@
 {
-  "name": "$name$",
-  "version": "$version$",
+  "name": "",
+  "version": "0.0.2",
+  "scripts": {
+    "server": "nodemon ./apiServer/index.js"
+  },
+  "devDependencies": {
+    "nodemon": "*",
+    "concurrently": "*"
+  },
   "dependencies": {
     "mongoose": "*",
     "uniqid": "*",
