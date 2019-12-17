@@ -12,6 +12,7 @@
     "mongoose": "*",
     "uniqid": "*",
     "express": "*",
-    "body-parser": "*"
+    "body-parser": "*",
+    "cors": "*"
   }
 }
