@@ -40,10 +40,7 @@ var FindUserByUsername = function (username, done) {
 };
 
 var FindUserByName = function (name, done) {
-    User.find({name: name}, function (err, doc) {
-        if (err) return console.log(err);
-        return done(doc);
-    });
+    User.find({name: { $regex: /name/, $options: 'ig' }}, done);
 };
 
 var Login = function(username, password, done) {
