@@ -33,7 +33,7 @@ class Login extends Component {
             if (data.isValid) {
                 console.log("login successful");
 
-                this.props.onSuccessLogin(res.data.userID)
+                this.props.onSuccessLogin(data.user.userId)
             } else {
                 // reload the page
                alert("login failed");

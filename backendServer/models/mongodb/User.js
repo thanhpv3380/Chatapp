@@ -20,59 +20,92 @@ var UserSchema = new mongoose.Schema({
         default: ''
     },
     friend_list: [String],
-    wait_list: [String]
+    wait_list: [String],
+    room_list: [String]
 });
 var User = mongoose.model('User', UserSchema);
 
 
-var CreateUser = function (user, done) {
-    user.save(function (err, data) {
-        if (err) return console.error(err);
-        return done(data._id);
-    });
-};
-
-var FindUserByUsername = function (username, done) {
-    User.findOne({username: username}, function (err, doc) {
+var CreateUser = function (username, name, password, avatar, done) {
+    User.findOne({ 'username': username }, function (err, doc) {
         if (err) return console.log(err);
-        return done(doc);
+        else if (doc != null) return done(err);
     });
-};
+
+    let user = new User({
+        username: username,
+        name: name,
+        password: password,
+        avatar: avatar
+    })
+
+    user.save((err, data) => {
+        if (err) done(err);
+        else return (done(data._id));
+    });
+}
+
 
 var FindUserByName = function (name, done) {
-    User.find({name: { $regex: /name/, $options: 'ig' }}, done);
+    User.find({ name: new RegExp(name,'ig')}, done);
 };
 
-var Login = function(username, password, done) {
-    User.findOne({username: username, password: password}, function (err, doc) {
+//Trả về _id của user nếu đăng nhập thành công
+var Login = function (username, password, done) {
+    // login thành công trả về _id của user, ngược lại trả về false.
+    User.findOne({ username: username, password: password }, function (err, doc) {
         if (err) return console.log(err);
-        else if(doc == null) return done(false);
+        else if (doc == null) return done(false);
         else {
-            return done({userId: doc._id,
-                        name: doc.name,
-                        avatar: doc.avatar});
+            return done({
+                userId: doc._id,
+                name: doc.name,
+                avatar: doc.avatar
+            });
         }
     });
 };
 
-var CheckUsername = function(username, done){
-    User.findOne({username: username}, function (err, doc) {
+var CheckUsername = function (username, done) {
+    //trả về false là username chưa bị sử dụng, true là đã bị sử dụng.
+    User.findOne({ username: username }, function (err, doc) {
         if (err) return console.log(err);
-        else if(doc == null) return done(false);
+        else if (doc == null) return done(false);
         return done(true);
     });
 };
 
 
+// Trả về name, avatar, wait_list, friend_list, room_list của user
+var GetInfoUser = function (_idUser, done) {
+    User.findById(_idUser, 'name avatar friend_list wait_list room_list', function (err, doc) {
+        if (err) return done(err);
+        else return done(doc);
+
+    })
+}
+
+
 module.exports = {
     FindUserByName,
-    FindUserByUsername,
+    // FindUserByUsername,
     CreateUser,
-    User,
     Login,
-    CheckUsername
+    CheckUsername,
+    GetInfoUser
 };
 
+//  --------------****************TEST****************---------------
+
+// Login('ti', '12345', function (data) {
+//     console.log(data);
+//
+// })
+
+// GetInfoUser('5dc994237ca7c207c3b36ba1', function (data) {
+//     console.log(data);
+
+// })
 
 //  User.findOne({username: 'ti'}).exec((err, user)=>{
 //      console.log(user.name);
