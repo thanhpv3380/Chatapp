@@ -48,7 +48,9 @@ var Login = function(username, password, done) {
         if (err) return console.log(err);
         else if(doc == null) return done(false);
         else {
-            return done(doc._id);
+            return done({userId: doc._id,
+                        name: doc.name,
+                        avatar: doc.avatar});
         }
     });
 };

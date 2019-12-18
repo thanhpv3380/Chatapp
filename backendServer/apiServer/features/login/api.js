@@ -2,30 +2,28 @@ const express = require("express"),
     router = express.Router()
 
 
-const user = require('../../../models/mongodb/User');
-router.use(express.static(__dirname + "/frontend"))
+const User = require('../../../models/mongodb/User');
 
 router.route('/')
     .post(function (req, res) {
         var usernameLogin = req.body.username;
         var passwordLogin = req.body.password;
-        user.Login(usernameLogin, passwordLogin, function (result) {
+        User.Login(usernameLogin, passwordLogin, function (result) {
             if (result == false || result == null) {
                 res.json({
                     'isValid': false
                 })
             } else {
-                var userID = result;
                 res.json({
                     'isValid': true,
-                    userID
+                    user: result
                 })
             }
         })
     })
 router.get('/register/:username', (req, res) => {
     var username = req.params.username;
-    user.CheckUsername(username, function (dataResult) {
+    User.CheckUsername(username, function (dataResult) {
         if (dataResult == false) {
             res.json({
                 'isValid': true
@@ -45,7 +43,7 @@ router.post("/register",function (req, res) {
         var avatar = req.body.avatar;
         console.log(username);
         console.log(password);
-        var userRegister = new user.User({
+        var userRegister = new User.User({
             username: username,
             name: name,
             password: password,
@@ -54,9 +52,9 @@ router.post("/register",function (req, res) {
             wait_list: ""
         });
 
-        user.CheckUsername(username, function (data) {
+        User.CheckUsername(username, function (data) {
             if (data == false) {
-                user.CreateUser(userRegister, function (result) {
+                User.CreateUser(userRegister, function (result) {
                     if (result == null) {
                         res.json({
                             'success': false
