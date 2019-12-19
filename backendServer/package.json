@@ -13,6 +13,7 @@
     "uniqid": "*",
     "express": "*",
     "body-parser": "*",
-    "cors": "*"
+    "cors": "*",
+    "express-session": "*"
   }
 }
