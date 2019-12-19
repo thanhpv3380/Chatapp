@@ -2,7 +2,7 @@ const express=require("express"),
      router = express.Router()
 const session = require('express-session');
 
-const user = require('../../models/mongodb/User');
+const user = require('../models/mongodb/User');
 
 router.use(session({
     resave: true, 
@@ -69,7 +69,7 @@ router.route('/resgister')
           })      
     })
 
-    router.get('/resgister/:username', (req, res) =>{
+    router.get('/register/:username', (req, res) =>{
         var username = req.params.username;
         user.CheckUsername(username, function(dataResult){
             if(dataResult == false){

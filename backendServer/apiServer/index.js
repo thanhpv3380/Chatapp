@@ -11,7 +11,7 @@ app.use((req,res,next)=>{
     next()
 })
 
-const login=require("./login-register").router
+const login=require("./login-register")
 app.use(login)
 
 app.listen(process.env.PORT || 3000, function () {
