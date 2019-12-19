@@ -14,6 +14,9 @@ app.use((req,res,next)=>{
 const login=require("./login-register")
 app.use(login)
 
+const rooms=require("./rooms")
+app.use(rooms)
+
 app.listen(process.env.PORT || 3000, function () {
     console.log('Node.js listening ...');
 });

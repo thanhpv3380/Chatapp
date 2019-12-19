@@ -14,7 +14,7 @@ const RoomSchema = new mongoose.Schema({
         Type: String,
         Body: {
             type: String,
-            default: null
+            default: ''
         },
         time: {
             type: Date,
@@ -37,8 +37,7 @@ const create = function (members,callback, name = null) {
 }
 
 const findByUserId=function(userId, callback){
-    id=ObjectId(userId);
-    Room.find({members: {$elemMatch: {userId: id}}}).exec(callback)
+    Room.find({members: {$elemMatch: {userId}}}).exec(callback)
 }
 
 // Trả về mảng gồm các _id của các thành viên trong room
@@ -56,12 +55,12 @@ var CreateMessage =  function (roomID, From, Type, Body, time, done) {
         Body: Body,
         time: time
     }
-    GetRoomByID(roomID, function (err,data) {
-        if (err) {return done(err,null)}
+    GetRoomByID(roomID, function (err1,data) {
+        if (err1) {return done(err1,null)}
         else{
             data.messages.push(message);
             data.save(function (err, doc) {
-                return done(err,doc)
+                return done(err,message)
             })
         }
     })    
@@ -69,8 +68,9 @@ var CreateMessage =  function (roomID, From, Type, Body, time, done) {
 
  // Chi viec post message, ham se tu kiem tra su ton tai cua room, neu chua co se them
  var GetLastTimeARoom = function(roomID, done){
-    Room.findById(roomID, 'messages', function (err, doc) {
-        done(err,doc.messages[doc.messages.length-1].time);
+    Room.findById(roomID, 'message', function (err, doc) {
+        if(err) console.log(err);
+        return done(err, doc.messages[doc.messages.length-1].time);
 
     })
 }
@@ -78,32 +78,46 @@ var CreateMessage =  function (roomID, From, Type, Body, time, done) {
 // Trả về mảng gồm 'number' tin nhắn trong room. ví dụ cần lấy 5 tin nhắn thì number = 5.
 var GetMessengerInRoom = function(roomID, number, done){
     Room.findById(roomID, 'messages', function (err, doc) {
-        if(err) return done(err);
-        else return done(doc.messages);
+        if(err) console.log(err);
+        return done(err, doc.messages);
+
     }).limit(number)
 }
 
-var SetRoomStatus = function(roomID, status){
+var SetRoomStatus = function(roomID, status, done){
     Room.updateOne({_id: roomID}, {
          
             'isOnline': status
     }, function () {
          console.log(('Update complete'));
+         return done(null, true);
     })
 }
 
-// Trả về trạng thái online của room, true or false 
-var GetRoomStatus = function(roomID  , done){
+var GetRoomStatus = function(roomID, done){
     Room.findById(roomID, 'isOnline', function (err, doc) {
-        done(err,doc);
+        if(err) console.log(err);
+        return done(err, doc.isOnline);
+
     })
 }
 
+
+var GetRoomByID =  function (roomID, done) {
+    Room.findById(roomID, 'members isOnline messages', function (err, doc) {
+        if(err) console.log(err);
+        return done(err, doc);
+
+    })
+};
 
 //create(["5df8a8176377113751905e66","5dc994237ca7c207c3b36ba1"],(err, data)=>{console.log(data)}, "test room")
 // findByUserId("313131313131313131313132",(err, data)=>{
 //     console.log(err, data)
 // })
+
+//CreateMessage("5dfa00d14a06793b0a76a342","5dfa00d14a06793b0a76a343","text","reply to the first one",1,(err,data)=>{console.log(data)})
+
 module.exports = {
     findByUserId,
     create,
@@ -112,5 +126,6 @@ module.exports = {
     GetRoomByID,
     GetRoomMembers,
     GetRoomStatus,
-    SetRoomStatus
+    SetRoomStatus,
+    CreateMessage
 };

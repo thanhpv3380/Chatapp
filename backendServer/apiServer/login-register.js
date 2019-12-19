@@ -23,7 +23,7 @@ router.route('/')
                 req.session.userID = result.userId; 
                 res.json({
                     'isValid' : true,
-                    'user': result
+                    'userId': result
                 })
             }
         })
