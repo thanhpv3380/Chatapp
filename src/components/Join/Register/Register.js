@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+// Constants
+import Constants from './../../Constants'
 class Register extends Component {
     constructor(props) {
         super(props);
@@ -9,15 +11,18 @@ class Register extends Component {
             password: '',
             userIsExist: false,
         }
+        // instantiate the Constants
+        this.allConstants = new Constants();
     }
     onChange = (event) => {
         var target = event.target;
         var name = target.name;
         var value = target.type === 'checkbox' ? target.checked : target.value;
+        let allConstants = this.allConstants;
         if (name === 'username') {
             axios({
                 method: 'GET',
-                url: 'http://localhost:3000/register/'+value,
+                url: allConstants.checkUsername.replace('{username}', value),
             }).then(res => {
                 var data = res.data;
                 this.setState({
@@ -36,9 +41,10 @@ class Register extends Component {
     onSubmit = (event) => {
         event.preventDefault();
         const { name, username, password } = this.state;
+        let allConstants = this.allConstants;
         axios({
             method: 'POST',
-            url: 'http://localhost:3000/register',
+            url: allConstants.register,
             data: {
                 name: name,
                 username: username,
@@ -49,8 +55,8 @@ class Register extends Component {
             if (data.success) {
                 alert('register success');
                 this.setState({
-                    username:'', 
-                    password:''
+                    username: '',
+                    password: ''
                 });
             }
             else {
@@ -75,7 +81,7 @@ class Register extends Component {
     //     }
     // }
     render() {
-        var  { name, username, password, userIsExist } = this.state;
+        var { name, username, password, userIsExist } = this.state;
         return (
             <div className="signup">
                 <div className="title-content">Signup</div>

@@ -4,7 +4,8 @@ import ReactDOM from 'react-dom';
 // component
 import Message from './Message';
 import WriteMessage from './WriteMessage';
-
+// Constants
+import Constants from './../../Constants';
 class MessagesPanel extends Component {
 
     constructor(props) {
@@ -15,6 +16,8 @@ class MessagesPanel extends Component {
             friendName: '',
             friendAvatar: ''
         }
+        // instantiate the Constants
+        this.allConstants = new Constants();
     }
     componentWillUpdate() {
         const node = ReactDOM.findDOMNode(this);
@@ -39,10 +42,10 @@ class MessagesPanel extends Component {
         let selectedRoomId = (id) ? id : 'me' // this.props.selectedRoomId ||
 
         console.log('IN MESSAGE PANEL : selected friend id in ', selectedRoomId)
-
+        let allConstants = this.allConstants;
         axios({
             method: 'GET',
-            url: ' http://localhost:9000/getconversation/' + selectedRoomId
+            url: allConstants.getConversation.replace('{id}', selectedRoomId)
         }).then((res) => {
             console.log('conversation is now: ', res.data);
 
@@ -80,7 +83,7 @@ class MessagesPanel extends Component {
 
     render() {
         let { messages, friendAvatar, friendName } = this.state;
-        let { userInfo, selectedRoomId } = this.props;
+        let { userId, selectedRoomId } = this.props;
 
         return (
             <div>
@@ -94,10 +97,10 @@ class MessagesPanel extends Component {
                 <Message
                     messages={messages}
                     friendAvatar={friendAvatar}
-                    userInfo={userInfo}
+                    userId={userId}
                 />
                 <WriteMessage
-                    userInfo={userInfo}
+                    userId={userId}
                     selectedRoomId={selectedRoomId}
                     onLineRoom={this.onLineRoom}
                     onNewMessageArrival={this.onNewMessageArrival.bind(this)} 

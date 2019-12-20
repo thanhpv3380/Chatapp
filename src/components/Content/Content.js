@@ -10,17 +10,16 @@ import './Content.css';
 class Content extends Component {
     constructor(props) {
         super(props);
-        this.state = {  
-            showUserInfo: false, 
+        this.state = {   
             showMessagePanel: true,
             showRoomPanel: true,
             onlineRooms: []
         };
     }
     setSelectedRoomId = (id) => {
-        console.log('id here in content: ', id);
+        // console.log('id here in content: ', id);
         this.setState({ selectedRoomId: id }, () => {
-            console.log('state is now', this.state);
+            // console.log('state is now', this.state);
         });
     }
     fillRoomInfoFromSocket = (message) => {
@@ -32,31 +31,32 @@ class Content extends Component {
     notifyOnlineRooms = (rooms) => {
         this.setState({ onlineRooms: rooms })
     }
+
     render() {
-        let { userInfo } = this.props;
-        let {showUserInfo, showMessagePanel, showRoomPanel, selectedRoomId, newMessageFromSocket, onlineRooms} = this.state;
+        let { userId } = this.props;
+        let {showMessagePanel, showRoomPanel, selectedRoomId, newMessageFromSocket, onlineRooms} = this.state;
         return (
             <div>
-                <Header showUserInfo={showUserInfo} userInfo= {userInfo}/>
+                <Header userId= {userId}/>
                 
                 <div className="container-fluid p-0">
                     <div className="content">
                         <div className="row m-0">
                             <div className='col-sm-4 p-0 content-left'>
                                 <RoomPanel
-                                     userInfo={userInfo}
-                                     onlineRooms={onlineRooms}
-                                     newMessageFromSocket={newMessageFromSocket}
-                                     setSelectedRoomId={this.setSelectedRoomId} 
+                                    userId={userId}
+                                    onlineRooms={onlineRooms}
+                                    newMessageFromSocket={newMessageFromSocket}
+                                    setSelectedRoomId={this.setSelectedRoomId} 
                                 />   
                             </div>
                             <div className='col-sm-8 p-0 content-mid'>
-                                <MessagesPanel 
-                                    userInfo={userInfo}
+                                {/* <MessagesPanel 
+                                    userId={userId}
                                     selectedRoomId={selectedRoomId}
                                     fillRoomInfoFromSocket={this.fillRoomInfoFromSocket}
                                     notifyOnlineRooms={this.notifyOnlineRooms}          
-                                />
+                                /> */}
                             </div>
                         </div>
                     </div>

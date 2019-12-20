@@ -17,7 +17,7 @@ class WriteMessage extends Component {
         this.socket.on('connect', () => {
             console.log('Socket connected FROM React...');
 
-            toAlertRoomIds = this.props.userInfo.userId;
+            toAlertRoomIds = this.props.userId;
 
             // emit all the room ids where the user belongs to see him / her as active
             this.socket.emit('onlineUser', toAlertRoomIds);
@@ -55,7 +55,7 @@ class WriteMessage extends Component {
             let data = {
                 date: new Date().toISOString(),
                 message: this.state.message.replace(this.state.message.charAt(this.state.message.length - 1), ""),
-                senderId: this.props.userInfo.userId,
+                senderId: this.props.userId,
                 roomId: this.props.selectedRoomId,
             }
 

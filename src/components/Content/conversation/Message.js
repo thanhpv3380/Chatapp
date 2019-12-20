@@ -7,7 +7,7 @@ class Message extends Component {
                 <div className="msg_history">
                     {
                         this.props.messages.map((msg, index) => {
-                            if (msg.senderId !== this.props.userInfo.userId) {
+                            if (msg.senderId !== this.props.userId) {
                                 return (
                                     <div className="incoming_msg" key={index} >
                                         <div className="incoming_msg_img" >
