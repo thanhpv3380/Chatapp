@@ -1,7 +1,7 @@
 const express = require('express'),
     router = express.Router();
 
-const Room = require('../../backendServer/models/mongodb/Room');
+const Room = require('../models/mongodb/Room');
 
 router.route('/rooms')
     .post((req, res) => {
@@ -19,7 +19,9 @@ router.route('/rooms')
                 res.json({
                     "status": "success",
                     "rooms": data.map((room) => {return{
-                        "members": room.members.map((member) => (member.userId)),
+                        "roomId": room._id,
+                        "name": reqoom.name, 
+                        //"members": room.members.map((member) => (member.userId)),
                         "lastMessage": room.messages.length>0?room.messages.reduce((nearestMessage, cur)=>cur.time>nearestMessage.time?cur:nearestMessage):null
                     }})
                 })

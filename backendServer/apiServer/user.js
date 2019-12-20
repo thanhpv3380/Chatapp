@@ -2,7 +2,7 @@ const express=require("express"),
      router = express.Router()
 const session = require('express-session');
 //const bcrypt = require('bcryptjs');
-const user = require('../../models/mongodb/User');
+const user = require('../models/mongodb/User');
 
 router.use(session({
     resave: true, 
@@ -23,7 +23,7 @@ router.route('/')
                 req.session.userID = userID; 
                 res.json({
                     'isValid' : true,
-                    'userID' : result
+                    'userId' : result
                 })
             }
         })
@@ -35,8 +35,8 @@ router.route('/resgister')
           var password = req.body.password;
           var name = req.body.name;
           var avatar = ' ';
-          console.log(username);
-          console.log(password);
+        //   console.log(username);
+        //   console.log(password);
 
     user.CheckUsername(username, function(data, err){
               if(data == false){

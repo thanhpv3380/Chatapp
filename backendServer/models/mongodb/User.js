@@ -121,10 +121,10 @@ module.exports = {
 
 //  --------------****************TEST****************---------------
 
-Login('tao', '12345', function (err, data) {
-    console.log(data);
+// Login('tao', '12345', function (err, data) {
+//     console.log(data);
 
-})
+// })
 
 // GetInfoUser('5dc994237ca7c207c3b36ba1', function (data) {
 //     console.log(data);
