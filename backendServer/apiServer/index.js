@@ -11,7 +11,7 @@ app.use((req,res,next)=>{
     next()
 })
 
-const login=require("./login-register")
+const login=require("./user")
 app.use(login)
 
 const rooms=require("./rooms")
