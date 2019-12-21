@@ -1,7 +1,7 @@
 const Mongodb = require('./Mongodb');
 const mongoose = Mongodb.mongoose;
 const ObjectId= mongoose.Types.ObjectId
-
+const User=require("./User")
 
 const RoomSchema = new mongoose.Schema({
     name: String,
@@ -87,7 +87,7 @@ var GetMessengerInRoom = function(roomID, number, done){
 var SetRoomStatus = function(roomID, status, done){
     Room.updateOne({_id: roomID}, {
          
-            'isOnline': status
+            'online': status
     }, function () {
          console.log(('Update complete'));
          return done(null, true);
@@ -95,7 +95,7 @@ var SetRoomStatus = function(roomID, status, done){
 }
 
 var GetRoomStatus = function(roomID, done){
-    Room.findById(roomID, 'isOnline', function (err, doc) {
+    Room.findById(roomID, 'online', function (err, doc) {
         if(err) console.log(err);
         return done(err, doc.isOnline);
 
@@ -110,6 +110,33 @@ var GetRoomByID =  function (roomID, done) {
 
     })
 };
+
+const getOnlineRoomsByUserId=function(userId, callback){
+    User.getRoomListByUserId(userId,(err, roomList)=>{
+        if (err){
+            console.log("cannot find room list of user having Id: "+userId)
+            callback(err, roomList)
+        }else{
+            onlineRoom=roomList.filter((room)=>room.online)
+            callback(err, onlineRoom)
+        }
+
+    })
+}
+
+const setAllRoomToOnline=function(userId){
+    User.getRoomListByUserId(userId, (err, roomList)=>{
+        if (err){
+            console.log("cannot find room list of user having Id: "+userId)
+        }else{
+            roomList.forEach((roomId)=>{
+                SetRoomStatus(roomId, true, (err, data)=>{
+                    //do nothing
+                })
+            })
+        }
+    })
+}
 
 //create(["5df8a8176377113751905e66","5dc994237ca7c207c3b36ba1"],(err, data)=>{console.log(data)}, "test room")
 // findByUserId("313131313131313131313132",(err, data)=>{
@@ -127,5 +154,8 @@ module.exports = {
     GetRoomMembers,
     GetRoomStatus,
     SetRoomStatus,
-    CreateMessage
+    CreateMessage,
+    getOnlineRoomsByUserId,
+    setAllRoomToOnline
 };
+

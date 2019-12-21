@@ -19,8 +19,7 @@ router.route('/')
                 res.json({
                     'isValid' : false
                 })   
-            }else{
-                req.session.userID = userID; 
+            }else{ 
                 res.json({
                     'isValid' : true,
                     'userId' : result

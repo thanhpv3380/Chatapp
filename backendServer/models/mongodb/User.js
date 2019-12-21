@@ -108,10 +108,28 @@ var GetInfoUser = function(_idUser, done){
     })
 }
 
+const getRoomListByUserId=function(userId,callback){
+    User.findOne({'_id':userId}).exec((err,data)=>{
+        if (err) {callback(err, data)}
+        else{
+            callback(err, data.room_list)
+        }
+    })
+}
+
+// var changePassword = function(userId, password, done){
+//     User.updateOne({_id: userId}, {
+//         password
+//     }, function () {
+//          console.log(('Update complete'));
+//          return done(null, true);
+//     })
+// }
 
 module.exports = {
-   // FindUserByName,
-   // FindUserByUsername,
+    getRoomListByUserId,
+    FindUserByName,
+    // FindUserByUsername,
     CreateUser,
     Login,
     CheckUsername,
@@ -139,3 +157,5 @@ module.exports = {
 // CreateUser('tao', 'tao nguyen', '123', '', function (err, data) {
 //      console.log(data);
 // })
+
+//changePassword('5df8a8176377113751905e66','356a192b7913b04c54574d18c28d46e6395428ab', (err, data)=>{console.log(err, data)})
