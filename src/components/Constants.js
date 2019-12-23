@@ -1,7 +1,7 @@
 class Constants {
     constructor() {
         // all the URLs
-        this.url = 'http://192.168.1.224:3000';
+        this.url = 'http://localhost:3000';
         this.login = `${this.url}/`;
         this.register = `${this.url}/register`;
         this.getUser = `${this.url}/getUser`;
@@ -9,15 +9,11 @@ class Constants {
         this.checkUsername = `${this.url}/register/{username}`;
         this.getConversation = `${this.url}/getMessage`;
         this.getRooms = `${this.url}/rooms`;
-        this.webSocketServer = 'http://127.0.0.1:3002';
+        this.webSocketServer = 'http://localhost:3002';
 
         // initialize
         this.theWeek = makeFormattedWeek();
-        this.formatDate = (dateReceived) => {
-            return `${new Date(dateReceived).getDate()}/${new Date(dateReceived).getMonth() + 1}/${new Date(dateReceived).getFullYear()}/${new Date(dateReceived).getHours}/${new Date(dateReceived).getMinutes}`;
-        }
         this.formatDates = (dateReceived) => {
-            console.log(dateReceived);
             if (this.theWeek[dateReceived.substring(0, dateReceived.indexOf('T'))]) {
                 let formattedDate = this.theWeek[dateReceived.substring(0, dateReceived.indexOf('T'))]
                 return (formattedDate === 'Today') ? dateReceived.substr(dateReceived.indexOf('T') + 1, 5) : formattedDate

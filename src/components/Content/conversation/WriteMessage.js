@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-
+import {IoIosSend} from 'react-icons/io';
+import {MdInsertEmoticon} from 'react-icons/md';
 class WriteMessage extends Component {
     constructor() {
         super();
@@ -33,27 +34,31 @@ class WriteMessage extends Component {
         this.setState({ chatText: '' });
 
     }
+    componentDidUpdate(prevProps) {
+        if (this.props.selectedRoomId !== prevProps.selectedRoomId) {
+            this.setState({ chatText: '' });
+        }
+    }
     render() {
 
         return (
             <div className="type_msg">
                 <div className="row">
-                    <div className="col-sm-8">
-                        <input type="text"
-                            placeholder="Type your message..."
-                            value={this.state.chatText}
-                            onChange={this.handleChange}
-                            onKeyUp={(e) => this.userTyping(e)}
-                            className="form-control box-text"
-                        >
-                        </input>
-                    </div>
-                    <div className="col-sm-4">
-                        <button className="fa fa-paper-plane btn-type" onClick={this.submitMessage}></button>
-                    </div>
+                    <input type="text"
+                        placeholder="Type your message..."
+                        value={this.state.chatText}
+                        onChange={this.handleChange}
+                        onKeyUp={(e) => this.userTyping(e)}
+                        className="form-control box-text"
+                    >
+                    </input>
+                    <IoIosSend className="btn-send btn-msg"/>
+                    <MdInsertEmoticon className="btn-send btn-msg" />
+                    {/* <div className="fa fa-paper-plane btn-type" onClick={this.submitMessage}></div> */}
+
                 </div>
 
-                
+
             </div>
         );
     }

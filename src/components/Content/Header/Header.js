@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
-import Avatar from 'react-avatar-edit';
-import { TiUpload } from 'react-icons/ti';
 import { MdModeEdit } from 'react-icons/md';
 import axios from 'axios';
-
+import {TiMessages} from 'react-icons/ti'; 
+import {FaUserFriends} from 'react-icons/fa';
 // components 
 import imgBg from './../../../images/bg-login.jpg';
 // Constants
@@ -35,12 +34,14 @@ class Header extends Component {
     }
     OpenUserInfo = () => {
         this.setState({
-            showUserInfo: true
+            showUserInfo: true,
+            showInfo: false
         });
     }
     closeEditUserInfo = () => {
         this.setState({
-            showUserInfo: false
+            showUserInfo: false,
+            showInfo: false
         });
     }
     onChange = (event) => {
@@ -108,7 +109,7 @@ class Header extends Component {
             elem.target.value = "";
         };
     }
-    showEditName = () =>{
+    showEditName = () => {
         this.setState({
             showEditName: true
         });
@@ -128,14 +129,15 @@ class Header extends Component {
                         <div className="col-sm-6 text-center iconheader">
                             {/* notification add friend
                             {/* <div className="notif n1">1</div> */}
-                            {/* <Link className="iconbtn fa fa-users" to='/add'></Link> */}
+                            {/* <a className="iconbtn fa fa-users" to='/add'></a>
                             {/* notification message */}
                             {/* <div className="notif n2">2</div> */}
-                            {/* <Link className="iconbtn fa fa-comment" to='/chat'></Link> */}
+                            {/* <a className="iconbtn fa fa-comment" to='/chat'></a> */}
                             {/* notification */}
                             {/* <div className="notif n3">3</div> */}
-                            {/* <Link className="iconbtn fa fa-bell"></Link> */}
-
+                            {/* <a className="iconbtn fa fa-bell"></a> */} 
+                            <FaUserFriends className='iconbtn'/>
+                            <TiMessages className='iconbtn'/>
                         </div>
                         <div className="col-sm-3 iconuser">
                             <span>{name}</span>
@@ -148,10 +150,8 @@ class Header extends Component {
                                 <div className="edituser">
                                     <div className="box-edituser" onClick={this.OpenUserInfo}>Update Information</div>
                                     <hr />
-                                    <div className="box-edituser" onClick={this.handleLogout}>Logout</div>
+                                    <div className="box-edituser" onClick={() => { window.location.reload() }} >Logout</div>
                                 </div>
-                                // <button className="btn-logout" onClick={this.handleLogout}>Logout</button>
-
                                 :
                                 ''
                             }
@@ -166,18 +166,34 @@ class Header extends Component {
                     <ModalHeader>User Information</ModalHeader>
                     <ModalBody>
                         <div className="text-center img-user-info"><img src={imgBg} className="img-circle text-center" alt="avatar" width="80px" height="80px" /></div>
-                        {!showEditName ? 
+                        {!showEditName ?
                             <div>
-                                <div className="modal-name text-center">{name}</div>
-                                <MdModeEdit className="editName" onClick={this.showEditName}/>
+                                <div className="title text-center edit-name">{name}</div>
+                                <MdModeEdit className="editName" onClick={this.showEditName} />
                             </div>
                             :
-                            <div className="modal-name"><input type="text" className="form-control" required name="name" onChange={this.onChange} value={name} /></div>
+                            <div className="form-group">
+                                <label className="title">Name:</label>
+                                <input type="text" className="form-control" placeholder="Enter password" required value={name} onChange={this.onChange} />
+                            </div>
                         }
-                        <span>Name: </span>
-                        <div className="modal-name"><input type="text" className="form-control" required name="name" onChange={this.onChange} value={name} /></div>
-                        {/* <span>Avatar: </span>
-                        <div className="modal-name"><input type="file" className="form-control" required name="avatar" onChange={this.onChange} /></div>     */}
+                        <div className="form-group">
+                            <label className="title">Phone Number:</label>
+                            <input type="text" className="form-control" placeholder="Enter phone" required value="0389632456" onChange={this.onChange} />
+                        </div>
+                        <div className="form-group">
+                            <label className="title">Birthday:</label>
+                            <input type="date" className="form-control" onChange={this.onChange} />
+                        </div>
+                        <div className="form-group">
+                            <label className="title">Sex:</label>
+                            <br/>
+                            <input type="radio" name="sex" className="sex" value="Male" /> Male
+                            <input type="radio" name="sex" className="sex" value="Female"/> Female
+                            
+                        </div>
+                        
+
                     </ModalBody>
                     <ModalFooter>
                         <Button color="primary" onClick={this.EditUserInfo}>Edit</Button>

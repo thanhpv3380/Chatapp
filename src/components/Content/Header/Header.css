@@ -28,4 +28,11 @@
     top:110px; 
     right:20px;
     cursor: pointer;
+    font-size: 20px;
+}
+.sex{
+    margin-left:20px;
+}
+.edit-name{
+    font-size: 20px;
 }

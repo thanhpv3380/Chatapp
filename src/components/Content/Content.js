@@ -5,6 +5,7 @@ import Header from './Header/Header';
 import RoomPanel from './rooms/RoomPanel';
 import MessagesPanel from './conversation/MessagesPanel';
 import Welcome from './Welcome/Welcome';
+import ContentRight from './ContentRight/ContentRight';
 // css
 import './Content.css';
 // Constants
@@ -86,9 +87,7 @@ class Content extends Component {
                                     <Welcome/>
                                 }   
                             </div>
-                            <div className='col-sm-3 p-0 content-right'>
-                                Hello
-                            </div>
+                            <ContentRight userId={userId}/>
                         </div>
                     </div>
                 </div>

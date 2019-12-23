@@ -53,6 +53,7 @@ body {
     border: none;
     background: #6f5499;
     outline: none;
+    cursor: pointer;
 }
 
 .iconbtn::before {
@@ -463,35 +464,49 @@ body {
 
 .type_msg {
     /*border-top: 1px solid #c4c4c4;*/
-    padding-top: 2px;
+    padding-top: 15px;
     padding-left: 10px;
 }
 
-/* .type_msg input[type="text"] {
+.type_msg input[type="text"] {
     padding: 5px 20px;
     width: 80%;
     display: inline-block;
-    border-radius: 20px;
+    border-radius: 10px;
     border: none;
-    border: 1px solid #555;
+    border: 1px solid #cccccc;
     outline: none;
     height: 40px;
-} */
-.box-text{
-}
+} 
 .btn-type {
     color: white;
-    background-color: #6f5499;
+    /* background-color: #6f5499; */
     font-size: 20px;
     margin-left: 10px;
-    border-radius: 20px;
-    border: 1px solid #6f5499;
+    /* border-radius: 5px;
+    border: 1px solid #6f5499; */
     padding: 5px 5px;
     cursor: pointer;
     display: inline-block;
     outline: none;
 }
-
+.btn-send{
+    margin-left: 15px;
+}
+.btn-msg{
+    width: 35px;
+    height: 35px;
+    font-size: 5px;
+    color: #6f5499;
+    border: 1px solid #cccccc;
+    border-radius: 50%;
+    cursor: pointer;
+    background-color: #fff;
+}
+.btn-msg:hover{
+    color: #fff;
+    background: #6f5499;
+}
 .btn-type:hover {
     color: #6f5499;
     background: #fff;
