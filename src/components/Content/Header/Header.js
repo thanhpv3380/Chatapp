@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
-import Avatar from 'react-avatar-edit'
+import Avatar from 'react-avatar-edit';
+import { TiUpload } from 'react-icons/ti';
+import { MdModeEdit } from 'react-icons/md';
 import axios from 'axios';
 
 // components 
@@ -20,7 +22,8 @@ class Header extends Component {
             name: '',
             avatar: '',
             preview: null,
-            src: src
+            src: src,
+            showEditName: false
         };
         // instantiate the Constants
         this.allConstants = new Constants();
@@ -105,9 +108,14 @@ class Header extends Component {
             elem.target.value = "";
         };
     }
+    showEditName = () =>{
+        this.setState({
+            showEditName: true
+        });
+    }
     render() {
 
-        let { name, avatar, showInfo, showUserInfo } = this.state;
+        let { name, avatar, showInfo, showUserInfo, showEditName } = this.state;
         return (
             <div className="container-fluid p-30">
                 <div className="container">
@@ -157,7 +165,15 @@ class Header extends Component {
                 <Modal isOpen={showUserInfo}>
                     <ModalHeader>User Information</ModalHeader>
                     <ModalBody>
-                        <div className="text-center img-user-info"><img src={imgBg} className="img-circle text-center" alt="avatar" width="60px" height="60px" /></div>
+                        <div className="text-center img-user-info"><img src={imgBg} className="img-circle text-center" alt="avatar" width="80px" height="80px" /></div>
+                        {!showEditName ? 
+                            <div>
+                                <div className="modal-name text-center">{name}</div>
+                                <MdModeEdit className="editName" onClick={this.showEditName}/>
+                            </div>
+                            :
+                            <div className="modal-name"><input type="text" className="form-control" required name="name" onChange={this.onChange} value={name} /></div>
+                        }
                         <span>Name: </span>
                         <div className="modal-name"><input type="text" className="form-control" required name="name" onChange={this.onChange} value={name} /></div>
                         {/* <span>Avatar: </span>

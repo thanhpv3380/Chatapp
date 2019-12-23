@@ -34,7 +34,7 @@ class Content extends Component {
     }
     componentDidMount() {
         this.socket.on("welcome", (msg) => {
-            this.socket.emit("userId", this.props.userId)
+            this.socket.emit("userId", this.props.userId);
         });
         this.socket.on("iAmOnline",({userId,roomId}) =>{
             let onlineRooms=this.state.onlineRooms

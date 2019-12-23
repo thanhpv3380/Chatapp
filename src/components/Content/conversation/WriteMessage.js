@@ -14,6 +14,7 @@ class WriteMessage extends Component {
     }
     userTyping = (e) => e.keyCode === 13 ? this.submitMessage() : this.setState({ chatText: e.target.value });
     submitMessage = (e) => {
+        console.log(new Date());
         let { chatText } = this.state;
         // define the chat message
         let data = {
@@ -36,8 +37,8 @@ class WriteMessage extends Component {
 
         return (
             <div className="type_msg">
-                <div class="row">
-                    <div class="col-sm-8">
+                <div className="row">
+                    <div className="col-sm-8">
                         <input type="text"
                             placeholder="Type your message..."
                             value={this.state.chatText}
@@ -47,7 +48,7 @@ class WriteMessage extends Component {
                         >
                         </input>
                     </div>
-                    <div class="col-sm-4">
+                    <div className="col-sm-4">
                         <button className="fa fa-paper-plane btn-type" onClick={this.submitMessage}></button>
                     </div>
                 </div>

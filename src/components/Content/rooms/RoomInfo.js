@@ -17,7 +17,7 @@ class RoomInfo extends Component {
             <div className="chat_people">
                 <div className="chat_img"> <img src={imBg} className="img-circle" alt="avatar user" width="40px" height="40px" /> </div>
                 <div className="chat_ib">
-                    <h5>{room.name}<span className="chat_date">{allConstants.formatDates(lastMessage.time)}</span></h5>
+                    <h5>{room.name}<span className="chat_date">{lastMessage.time}</span></h5>
                     <p>{lastMessage.Body}</p>
                 </div>
             </div>
