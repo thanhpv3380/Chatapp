@@ -112,6 +112,7 @@ const getRoomListByUserId=function(userId,callback){
     User.findOne({'_id':userId}).exec((err,data)=>{
         if (err) {callback(err, data)}
         else{
+            console.log("userId: ",userId)
             callback(err, data.room_list)
         }
     })
@@ -158,4 +159,4 @@ module.exports = {
 //      console.log(data);
 // })
 
-//changePassword('5df8a8176377113751905e66','356a192b7913b04c54574d18c28d46e6395428ab', (err, data)=>{console.log(err, data)})
+// changePassword("5dcc1ebaeeede81e0880e8ec",'356a192b7913b04c54574d18c28d46e6395428ab', (err, data)=>{console.log(err, data)})

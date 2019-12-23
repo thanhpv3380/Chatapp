@@ -76,12 +76,13 @@ var CreateMessage =  function (roomID, From, Type, Body, time, done) {
 }
 
 // Trả về mảng gồm 'number' tin nhắn trong room. ví dụ cần lấy 5 tin nhắn thì number = 5.
-var GetMessengerInRoom = function(roomID, number, done){
+var GetMessengerInRoom = function(roomID, done){
     Room.findById(roomID, 'messages', function (err, doc) {
+        //console.log(doc)
         if(err) console.log(err);
         return done(err, doc.messages);
 
-    }).limit(number)
+    })
 }
 
 var SetRoomStatus = function(roomID, status, done){
@@ -112,6 +113,7 @@ var GetRoomByID =  function (roomID, done) {
 };
 
 const getRoomsByUserIdAndStatus=function(userId, compareRoomStatusFunc, callback){
+    //console.log("115 ",userId)
     User.getRoomListByUserId(userId,(err, roomList)=>{
         if (err){
             console.log("cannot find room list of user having Id: "+userId)

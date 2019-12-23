@@ -20,6 +20,8 @@ class MessagesPanel extends Component {
     }
     componentDidMount() {
         this.scrollToBottom();
+        if (this.props.selectedRoomId !== '') 
+            this.loadConversation(this.props.selectedRoomId);
     }
     componentDidUpdate(prevProps) {
         if (this.props.selectedRoomId !== prevProps.selectedRoomId) {
@@ -39,27 +41,28 @@ class MessagesPanel extends Component {
     // load the conversation of the selected friend
     loadConversation(id) {
         let selectedRoomId = (id) ? id : '' // this.props.selectedRoomId ||
-
-        // console.log('IN MESSAGE PANEL : selected friend id in ', selectedRoomId)
-        // let allConstants = this.allConstants;
-        // axios({
-        //     method: 'POST',
-        //     url: allConstants.getConversation,
-        //     data: {
-        //         roomId: this.props.selectedRoomId,
-        //         limit: 5,
-        //         time: ''
-        //     }
-        // }).then((res) => {
-        //     console.log('conversation is now: ', res.data);
-
-        //     // set the messages field of the state with the data
-        //     this.setState({
-        //         messages: [...this.state.messages, res.data]
-        //     });
-        // }).catch(err => {
-        //     console.log(err);
-        // });
+        console.log('IN MESSAGE PANEL : selected friend id in ', selectedRoomId)
+        let allConstants = this.allConstants;
+        axios({
+            method: 'POST',
+            url: allConstants.getConversation,
+            data: {
+                roomId: this.props.selectedRoomId,
+                limit: 5,
+                time: new Date()
+            }
+        }).then((res) => {
+            //console.log('conversation is now: ', res.data);
+            if (res.data.status){
+            // set the messages field of the state with the data
+                this.setState({
+                    messages: res.data.messages
+                });
+                console.log('conversation is now: ', this.state.messages);
+            }
+        }).catch(err => {
+            console.log(err);
+        });
     }
     render() {
         let { messages } = this.state;
@@ -80,12 +83,12 @@ class MessagesPanel extends Component {
                         userId={userId}
                     />
                 </div>
-                <WriteMessage
-                    userId={userId}
-                    selectedRoomId={selectedRoomId}
-                    socket={socket}
-                />
-            </div>
+                    <WriteMessage
+                        userId={userId}
+                        selectedRoomId={selectedRoomId}
+                        socket={socket}
+                    />
+                 </div>
 
         );
     }

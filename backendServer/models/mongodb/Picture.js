@@ -13,6 +13,7 @@ let Picture = mongoose.model('Picture', PictureSchema);
 
   // Trả về _id của picture vừa insert 
 var insert = function (Type, body, Group, done) {
+    console.log("PICTURE-----------------insert")
     let picture = new Picture({
         Type: Type,
         body: body,
@@ -26,6 +27,7 @@ var insert = function (Type, body, Group, done) {
 }
 // Trả về đối tượng picture có các thuộc tính _id, Type, body, group 
 var GetPictureByID = function(pictureID, done){
+    console.log("PICTURE-----------------29", pictureID)
     Picture.findById(pictureID, function (err, doc) {
         if(err) console.log(err);
         return done(err, doc);
@@ -35,6 +37,7 @@ var GetPictureByID = function(pictureID, done){
 
 // Trả về mảng picture có các thuộc tính _id, Type, body, group
 var GetStickerByName = function(stickerName, done){
+    console.log("PICTURE-----------------40")
     Picture.find({'Type': 'Sticker', 'group': stickerName}, function (err, doc) {
         if(err) console.log(err);
         return done(err, doc);
@@ -44,6 +47,7 @@ var GetStickerByName = function(stickerName, done){
 
 // Trả về mảng gồm tất cả các sticker 
 var GetAllSticker = function(done){
+    console.log("PICTURE-----------------50")
     Picture.find({'Type': 'Sticker'}, function (err, doc) {
         if(err) return done(err);
         return done(err, doc);

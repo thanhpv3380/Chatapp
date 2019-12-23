@@ -1,7 +1,7 @@
 const express = require('express'),
-    router = express.Router();
+router = express.Router();
 
-const Room = require('../models/mongodb/Room');
+const Room = require('../../backendServer/models/mongodb/Room');
 
 router.route('/rooms')
     .post((req, res) => {
@@ -11,13 +11,13 @@ router.route('/rooms')
             if (err) {
                 console.log(err)
                 res.json({
-                    "status": "failed"
+                    "status": false
                 })
                 return
             } else {
                 console.log(data)
                 res.json({
-                    "status": "success",
+                    "status": true,
                     "rooms": data.map((room) => {return{
                         "roomId": room._id,
                         "name": room.name, 
@@ -27,9 +27,58 @@ router.route('/rooms')
                 })
             }
         })
-
     })
 
+    router.route('/getMessage')   
+    .post((req, res) => {
+        // var roomId = req.body.roomId;
+        var time = new Date();
+        var limit = req.body.limit;
+        var roomId = req.body.roomId;
+        console.log(time, limit, roomId)
+        Room.GetMessengerInRoom(roomId, function(err, messages){
+            if(err || messages == null){
+                res.json({
+                    'status': false
+                })
+            }else{
+                // console.log(messages)
+                function compare(a, b) {
+                    const messageA = a.time;
+                    const messageB = b.time;
+                    
+                    let comparison = 0;
+                    if (messageA > messageB) {
+                      comparison = 1;
+                    } else if (messageA < messageB) {
+                      comparison = -1;
+                    }
+                    return comparison;
+                   }
+                    
+                   messages.sort(compare);
+                   if(messages.length <= 10){
+                    res.json({
+                        'status': true,
+                        messages
+                    })
+                   }else{
+                       var data = [];
+                       var length = messages.length -1;
+                       while(limit > 0){
+                           if(messages[length].time <= time){
+                               data.push(messages[length]);
+                               limit--;
+                           }
+                           length--;
+                       }
+                       res.json({
+                        'status': true,
+                        'messages': data.
+                    })
+                   }  
+            }
+        })
+    })  
 
-module.exports = router
-  
+module.exports = router;

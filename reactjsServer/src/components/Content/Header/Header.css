@@ -23,3 +23,9 @@
 .img-user-info{
     margin-bottom: 10px;
 }
+.editName{
+    position: absolute;
+    top:110px; 
+    right:20px;
+    cursor: pointer;
+}

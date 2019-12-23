@@ -8,11 +8,11 @@ module.exports = (io) => {
     socket["userId"] = null;
     socket.emit("welcome", "wellcome message")
 
-
     socket.on("userId", (userId) => {
       //users.push({ userId, socket });
-
+      socket.userId=userId
       //inform every user's online room about users'online event, change rooms's user's online status 
+      
       mongodb.Room.getRoomsByUserIdAndStatus(socket.userId, (room) => room.online == true, (err, onlineRooms) => {
         if (err) { console.log("getRoomsByUserIdAndStatus's error: ", err) }
         else (
@@ -65,7 +65,7 @@ module.exports = (io) => {
     socket.on("disconnect", function () {
       //auto left all joined rooms
       //set all room in DB to offline and return all room id
-      mongodb.Room.getRoomsByUserIdAndStatus(socket.userId, (room) => true, (err, data) => {
+      mongodb.Room.getRoomsByUserIdAndStatus(socket.userId, (room) => true, (err, onlineRooms) => {
         if (err) { console.log("getRoomsByUserIdAndStatus's error: ", err) }
         else {
           onlineRooms.forEach(roomId => {
