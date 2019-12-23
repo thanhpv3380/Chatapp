@@ -1,41 +1,45 @@
 import React, { Component } from 'react';
-
+// Constants
+import Constants from './../../Constants'
 class Message extends Component {
+    constructor(props) {
+        super(props);
+        // instantiate the Constants
+        this.allConstants = new Constants();
+    }
     render() {
+        let allConstants = this.allConstants;
         return (
-            <div className="mesgs" >
-                <div className="msg_history">
-                    {
-                        this.props.messages.map((msg, index) => {
-                            if (msg.senderId !== this.props.userId) {
-                                return (
-                                    <div className="incoming_msg" key={index} >
-                                        <div className="incoming_msg_img" >
-                                            <img src={this.props.friendAvatar} className="img-circle" alt="Cinque Terre" width="40px" height="40px" />
-                                        </div>
-                                        <div className="received_msg">
-                                            <div className="received_withd_msg" >
-                                                <p>{msg.message}</p>
-                                                <span className="time_date" > {msg.date} </span>
-                                            </div>
+            <div className="msg_history">
+                {
+                    this.props.messages.map((msg, index) => {
+                        if (msg.senderId !== this.props.userId) {
+                            return (
+                                <div className="incoming_msg" key={index} >
+                                    <div className="incoming_msg_img" >
+                                        <img src="" className="img-circle" alt="Cinque Terre" width="40px" height="40px" />
+                                    </div>
+                                    <div className="received_msg">
+                                        <div className="received_withd_msg" >
+                                            <p>{msg.Body}</p>
+                                            <span className="time_date" >{allConstants.formatDates(msg.time)}</span>
                                         </div>
                                     </div>
-                                );
-                            } else {
-                                return (
-                                    <div className="outgoing_msg" key={index} >
-                                        <div className="sent_msg" >
-                                            <p> {msg.message} </p>
-                                            <span className="time_date" > {msg.date} </span>
-                                        </div>
+                                </div>
+                            );
+                        } else {
+                            return (
+                                <div className="outgoing_msg" key={index} >
+                                    <div className="sent_msg" >
+                                        <p> {msg.Body} </p>
+                                        <span className="time_date" >{allConstants.formatDates(msg.time)}</span>
                                     </div>
-                                );
-                            }
-                        })
-                    }
-                </div>
+                                </div>
+                            );
+                        }
+                    })
+                }
             </div>
-
         )
     }
 }

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import SHA1 from 'sha1';
 // Constants
 import Constants from './../../Constants'
 class Register extends Component {
@@ -22,11 +23,11 @@ class Register extends Component {
         if (name === 'username') {
             axios({
                 method: 'GET',
-                url: allConstants.checkUsername.replace('{username}', value),
+                url: allConstants.checkUsername.replace('{username}', value)
             }).then(res => {
                 var data = res.data;
                 this.setState({
-                    userIsExist: !data.isValid
+                    userIsExist: data.status
                 });
             }).catch(err => {
                 console.log(err);
@@ -48,13 +49,14 @@ class Register extends Component {
             data: {
                 name: name,
                 username: username,
-                password: password
+                password: SHA1(password)
             }
         }).then(res => {
             var data = res.data;
-            if (data.success) {
+            if (data.status) {
                 alert('register success');
                 this.setState({
+                    name:'',
                     username: '',
                     password: ''
                 });

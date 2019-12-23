@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import {Modal, ModalHeader, ModalBody, ModalFooter, Button} from 'reactstrap';
+import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
+import Avatar from 'react-avatar-edit'
 import axios from 'axios';
 
 // components 
@@ -12,11 +13,14 @@ import './Header.css';
 class Header extends Component {
     constructor(props) {
         super(props);
+        const src = imgBg;
         this.state = {
             showInfo: false,
             showUserInfo: false,
-            name:'',
-            avatar:''
+            name: '',
+            avatar: '',
+            preview: null,
+            src: src
         };
         // instantiate the Constants
         this.allConstants = new Constants();
@@ -45,13 +49,13 @@ class Header extends Component {
         });
     }
     EditUserInfo = (event) => {
-        let {name, avatar} = this.state;
+        let { name, avatar } = this.state;
         let allConstants = this.allConstants;
         axios({
             method: 'POST',
             url: allConstants.editUser,
             data: {
-                userId : this.props.userId,
+                userId: this.props.userId,
                 name: name,
                 avatar: avatar
             }
@@ -59,7 +63,7 @@ class Header extends Component {
             var data = res.data;
             if (data.success) {
                 alert("login successful");
-            } else {      
+            } else {
                 alert("login failed");
             }
         }).catch(err => {
@@ -67,28 +71,42 @@ class Header extends Component {
         });
         event.preventDefault();
     }
-    componentDidMount(){
+    componentDidMount() {
         let allConstants = this.allConstants;
         axios({
             method: 'POST',
             url: allConstants.getUser,
             data: {
-                userId : this.props.userId
+                userId: this.props.userId
             }
         }).then(res => {
             var data = res.data;
-            if (data.status){
+            if (data.status) {
                 this.setState({
                     name: data.name,
                     avatar: data.avatar
                 });
             }
         }).catch(err => {
-            console.log(err);   
+            console.log(err);
         });
     }
+    onClose = () => {
+        this.setState({ preview: null })
+    }
+
+    onCrop = (preview) => {
+        this.setState({ preview })
+    }
+
+    onBeforeFileLoad = (elem) => {
+        if (elem.target.files[0].size > 71680) {
+            alert("File is too big!");
+            elem.target.value = "";
+        };
+    }
     render() {
-        
+
         let { name, avatar, showInfo, showUserInfo } = this.state;
         return (
             <div className="container-fluid p-30">
@@ -113,14 +131,15 @@ class Header extends Component {
                         </div>
                         <div className="col-sm-3 iconuser">
                             <span>{name}</span>
+
                             <div className="avatar" onClick={this.onToggleLogout}>
                                 <img src={imgBg} className="img-circle" alt="avatar" width="40px" height="40px" />
                             </div>
                             {showInfo ?
-                                
+
                                 <div className="edituser">
                                     <div className="box-edituser" onClick={this.OpenUserInfo}>Update Information</div>
-                                    <hr/>
+                                    <hr />
                                     <div className="box-edituser" onClick={this.handleLogout}>Logout</div>
                                 </div>
                                 // <button className="btn-logout" onClick={this.handleLogout}>Logout</button>
@@ -128,7 +147,7 @@ class Header extends Component {
                                 :
                                 ''
                             }
-                            
+
                         </div>
                         <div className="switchmode">
                             <input type="checkbox" />
@@ -137,10 +156,10 @@ class Header extends Component {
                 </div>
                 <Modal isOpen={showUserInfo}>
                     <ModalHeader>User Information</ModalHeader>
-                    <ModalBody>                       
+                    <ModalBody>
                         <div className="text-center img-user-info"><img src={imgBg} className="img-circle text-center" alt="avatar" width="60px" height="60px" /></div>
                         <span>Name: </span>
-                        <div className="modal-name"><input type="text" className="form-control" required name="name" onChange={this.onChange} value={name}/></div>
+                        <div className="modal-name"><input type="text" className="form-control" required name="name" onChange={this.onChange} value={name} /></div>
                         {/* <span>Avatar: </span>
                         <div className="modal-name"><input type="file" className="form-control" required name="avatar" onChange={this.onChange} /></div>     */}
                     </ModalBody>

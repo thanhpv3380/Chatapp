@@ -1,114 +1,93 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import ReactDOM from 'react-dom';
+
 // component
 import Message from './Message';
 import WriteMessage from './WriteMessage';
+
 // Constants
 import Constants from './../../Constants';
+
 class MessagesPanel extends Component {
 
     constructor(props) {
         super(props);
-
         this.state = {
             messages: [],
-            friendName: '',
-            friendAvatar: ''
         }
         // instantiate the Constants
         this.allConstants = new Constants();
     }
-    componentWillUpdate() {
-        const node = ReactDOM.findDOMNode(this);
-        this.shouldScrollToBottom = node.scrollTop + node.clientHeight >= node.scrollHeight;
-    }
     componentDidMount() {
-        if (this.shouldScrollToBottom) {
-            const node = ReactDOM.findDOMNode(this);
-            node.scrollTop = node.scrollHeight;
+        this.scrollToBottom();
+    }
+    componentDidUpdate(prevProps) {
+        if (this.props.selectedRoomId !== prevProps.selectedRoomId) {
+            console.log("change roomId",prevProps.selectedRoomId);
+            this.loadConversation(prevProps.selectedRoomId);
         }
+        if (prevProps.onNewMessageArrival.roomId === this.props.selectedRoomId) {
+            this.setState({ messages: [...this.state.messages, { ...prevProps.onNewMessageArrival.Body }] });
+        }
+        this.scrollToBottom();
     }
-   
-    // load the messages when the nextProps is different from the present one
-    // most important don't forget it 
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.selectedRoomId !== this.props.selectedRoomId)
-            this.loadConversation(nextProps.selectedRoomId)
+    scrollToBottom() {
+        const container = document.getElementById('mesgs');
+        if (container)
+            container.scrollTo(0, container.scrollHeight);
     }
-
     // load the conversation of the selected friend
     loadConversation(id) {
-        let selectedRoomId = (id) ? id : 'me' // this.props.selectedRoomId ||
+        let selectedRoomId = (id) ? id : '' // this.props.selectedRoomId ||
 
-        console.log('IN MESSAGE PANEL : selected friend id in ', selectedRoomId)
-        let allConstants = this.allConstants;
-        axios({
-            method: 'GET',
-            url: allConstants.getConversation.replace('{id}', selectedRoomId)
-        }).then((res) => {
-            console.log('conversation is now: ', res.data);
+        // console.log('IN MESSAGE PANEL : selected friend id in ', selectedRoomId)
+        // let allConstants = this.allConstants;
+        // axios({
+        //     method: 'POST',
+        //     url: allConstants.getConversation,
+        //     data: {
+        //         roomId: this.props.selectedRoomId,
+        //         limit: 5,
+        //         time: ''
+        //     }
+        // }).then((res) => {
+        //     console.log('conversation is now: ', res.data);
 
-            // set the messages field of the state with the data
-            this.setState({
-                messages: res.data.messages,
-                friendAvatar: res.data.friendAvatar,
-                friendName: res.data.friendName
-            });
-        }).catch(err => {
-            console.log(err);
-        });
+        //     // set the messages field of the state with the data
+        //     this.setState({
+        //         messages: [...this.state.messages, res.data]
+        //     });
+        // }).catch(err => {
+        //     console.log(err);
+        // });
     }
-
-    onNewMessageArrival(data) {
-
-        let newMessages = [...this.state.messages]
-        console.log('New Messages are', newMessages)
-
-        // if the current message is from the selected room also
-        if (data.roomId === this.props.selectedRoomId) {
-            this.setState((prevState, props) => ({
-                messages: [...this.state.messages, { ...data }]
-            }))
-        }
-
-        // fill the Room info from Socket data
-        this.props.fillRoomInfoFromSocket(data)
-    }
-
-    onLineRoom = (roomsOnline) => {
-        console.log('Online rooms are', roomsOnline)
-        this.props.notifyOnlineRooms(roomsOnline)
-    }
-
     render() {
-        let { messages, friendAvatar, friendName } = this.state;
-        let { userId, selectedRoomId } = this.props;
+        let { messages } = this.state;
+        let { userId, selectedRoomId, socket } = this.props;
 
         return (
             <div>
                 <div className="user-current" >
                     <div className="user-img" >
-                        <img src={friendAvatar} className="img-circle" alt="Cinque Terre" width="40px" height="40px" />
+                        <img src="" className="img-circle" alt="Cinque Terre" width="40px" height="40px" />
                     </div>
-                    <div className="user-name"> {friendName} </div>
+                    <div className="user-name"> {selectedRoomId} </div>
                     <div className="user-status"></div>
                 </div>
-                <Message
-                    messages={messages}
-                    friendAvatar={friendAvatar}
-                    userId={userId}
-                />
+                <div className="mesgs" id="mesgs">
+                    <Message
+                        messages={messages}
+                        userId={userId}
+                    />
+                </div>
                 <WriteMessage
                     userId={userId}
                     selectedRoomId={selectedRoomId}
-                    onLineRoom={this.onLineRoom}
-                    onNewMessageArrival={this.onNewMessageArrival.bind(this)} 
+                    socket={socket}
                 />
             </div>
 
         );
     }
 }
-
 export default MessagesPanel;

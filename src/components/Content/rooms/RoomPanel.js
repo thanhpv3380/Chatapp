@@ -11,59 +11,57 @@ class RoomPanel extends Component {
             rooms: [],
             showLoading: true
         }
-         // instantiate the Constants
-         this.allConstants = new Constants();
+        // instantiate the Constants
+        this.allConstants = new Constants();
+    }
+    componentDidUpdate(nextProps) {
+        if (nextProps.onNewMessageArrival && (!this.props.onNewMessageArrival || nextProps.onNewMessageArrival.roomId !== this.props.onNewMessageArrival.roomId)) {
+            let newRooms = [...this.state.rooms];
+            newRooms.forEach((room) => {
+                if (room.roomId === nextProps.onNewMessageArrival.roomId) {
+                    let lastMessage = room.lastMessage !== null ? room.lastMessage : { "Body": "", "time": "" };
+                    // adjust the necessary field if the roomId matches
+                    lastMessage.Body = nextProps.onNewMessageArrival.Body;
+                    lastMessage.time = nextProps.onNewMessageArrival.time;
+                    // lastMessage.senderId = nextProps.onNewMessageArrival.senderId;
+
+                    // if the message is from other non active room
+                    // if (room.read === true) {
+                    //     room.read = false
+                    //     this.saveReadStatusToDb(room, false)
+                    // }
+                }
+            })
+            newRooms = newRooms.sort((a, b) => {
+                let x = a.lastMessage !== null ? a.lastMessage : { "time": "" };
+                let y = b.lastMessage !== null ? b.lastMessage : { "time": "" };
+                return new Date(y.time) - new Date(x.time);
+
+            });
+            this.setState({ rooms: newRooms });
+        }
     }
     componentDidMount() {
         this.loadrooms();
     }
-    // componentWillReceiveProps(nextProps) {
-    //     // console.log('nextProps from RoomPanel', nextProps, ' and old props', this.props)
-
-    //     if (nextProps.newMessageFromSocket && (!this.props.newMessageFromSocket || nextProps.newMessageFromSocket.id !== this.props.newMessageFromSocket.id)) {
-
-    //         let newRooms = [...this.state.rooms]
-
-    //         newRooms.forEach((room) => {
-    //             if (room.roomId === nextProps.newMessageFromSocket.roomId) {
-
-    //                 // adjust the necessary field if the roomId matches
-    //                 room.lastMessage = nextProps.newMessageFromSocket.msgBody
-    //                 room.dateInfo = nextProps.newMessageFromSocket.timeSent
-    //                 room.senderId = nextProps.newMessageFromSocket.senderId
-
-    //                 // if the message is from other non active room
-    //                 if (room.read === true) {
-    //                     room.read = false
-    //                     this.saveReadStatusToDb(room, false)
-    //                 }
-    //             }
-    //         })
-
-    //         newRooms = newRooms.sort((a, b) => { return new Date(b.dateInfo) - new Date(a.dateInfo) })
-    //         this.setState({ rooms: newRooms })
-    //     }
-    // }
-    loadrooms(){
+    loadrooms() {
         let allConstants = this.allConstants;
         // call the back end to get rooms
         axios({
             method: 'POST',
             url: allConstants.getRooms,
             data: {
-                userId : this.props.userId
-            }       
+                userId: this.props.userId
+            }
         }).then(res => {
             var data = res.data;
-            if (data.status){
-                console.log(data.rooms);
-                this.setState({ rooms: data.rooms, showLoading: false })
+            if (data.status) {
+                console.log(data.rooms, "getRooms");
+                this.setState({ rooms: data.rooms });
             }
             else {
                 console.log("getRoom is failed");
             }
-            // res.data = res.data.sort((a, b) => { return new Date(b.dateInfo) - new Date(a.dateInfo) })
-            // this.setState({ rooms: res.data, showLoading: false })
         }).catch(err => {
             console.log(err);
         });
@@ -71,8 +69,8 @@ class RoomPanel extends Component {
 
     setSelectedRoomId = (id) => {
         // pass the selected room id augmented with logged in userid to the parent 
+        console.log(id, " choose id");
         this.props.setSelectedRoomId(id);
-
         // set active room id for highlighting purpose
         this.setState({ activeRoomId: id });
         // this.changeReadStatus(id)
@@ -108,21 +106,23 @@ class RoomPanel extends Component {
     //     })
     // }
     render() {
-        let { userId, onlineRooms } = this.props;
-        let { activeRoomId, showLoading, rooms } = this.state;
-
+        let { userId, setSelectedRoomId } = this.props;
+        let { activeRoomId, rooms } = this.state;
         return (
             <div className="inbox_chat">
                 {
-                    rooms.map((room, index) => {
-                        return <RoomInfo 
-                            key={index}
-                            room={room} 
-                            userId={userId}
-                            activeRoomId={activeRoomId}
-                            onlineRooms={onlineRooms}
-                            // setSelectedRoomId={this.setSelectedRoomId(room.roomId)}
-                        />
+                    rooms.map((room) => {
+                        return (
+                            <div className='chat_list' key={room.roomId} onClick={() => this.setSelectedRoomId(room.roomId)}>
+                                <RoomInfo
+                                    room={room}
+                                    userId={userId}
+                                    activeRoomId={activeRoomId}
+                                    setSelectedRoomId={setSelectedRoomId}
+
+                                />
+                            </div>
+                        )
                     })
                 }
             </div>

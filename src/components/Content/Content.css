@@ -324,10 +324,11 @@ body {
 .chat_list {
     margin: 0;
     padding: 18px 16px 10px;
+    cursor: pointer;
 }
 
 .chat_list:hover {
-    background: #6f5499;
+    background: #cccccc;
 }
 
 .inbox_chat {
@@ -466,7 +467,7 @@ body {
     padding-left: 10px;
 }
 
-.type_msg input[type="text"] {
+/* .type_msg input[type="text"] {
     padding: 5px 20px;
     width: 80%;
     display: inline-block;
@@ -475,8 +476,9 @@ body {
     border: 1px solid #555;
     outline: none;
     height: 40px;
+} */
+.box-text{
 }
-
 .btn-type {
     color: white;
     background-color: #6f5499;
