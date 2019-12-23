@@ -11,8 +11,8 @@ class App extends Component {
             showContent: false          
         }
     }
-    onSuccessLogin = (userInfo) => {
-        this.setState({ userInfo, showContent: true }, () => {
+    onSuccessLogin = (userId) => {
+        this.setState({ userId, showContent: true }, () => {
             console.log('State is now', this.state)
         })
     }
@@ -21,10 +21,10 @@ class App extends Component {
         alert('Some Error occurred...!!')
     }
     render() {
-        let { showContent, userInfo} = this.state;
+        let { showContent, userId} = this.state;
         return (
             <div className="App">
-                {(showContent === false) ? <Join onSuccessLogin={this.onSuccessLogin} /> : <Content userInfo={userInfo}/>}
+                {(showContent === false) ? <Join onSuccessLogin={this.onSuccessLogin} /> : <Content userId={userId}/>}
             </div>
         );
     }

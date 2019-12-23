@@ -1,15 +1,113 @@
 import React, { Component } from 'react';
+import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
+import Avatar from 'react-avatar-edit'
+import axios from 'axios';
+
+// components 
+import imgBg from './../../../images/bg-login.jpg';
+// Constants
+import Constants from './../../Constants';
+//css
+import './Header.css';
 
 class Header extends Component {
-    constructor(props){
+    constructor(props) {
         super(props);
+        const src = imgBg;
         this.state = {
-            showLogout : false
+            showInfo: false,
+            showUserInfo: false,
+            name: '',
+            avatar: '',
+            preview: null,
+            src: src
+        };
+        // instantiate the Constants
+        this.allConstants = new Constants();
+    }
+    onToggleLogout = () => {
+        this.setState({
+            showInfo: !this.state.showInfo
+        });
+    }
+    OpenUserInfo = () => {
+        this.setState({
+            showUserInfo: true
+        });
+    }
+    closeEditUserInfo = () => {
+        this.setState({
+            showUserInfo: false
+        });
+    }
+    onChange = (event) => {
+        var target = event.target;
+        var name = target.name;
+        var value = target.type === 'checkbox' ? target.checked : target.value;
+        this.setState({
+            [name]: value
+        });
+    }
+    EditUserInfo = (event) => {
+        let { name, avatar } = this.state;
+        let allConstants = this.allConstants;
+        axios({
+            method: 'POST',
+            url: allConstants.editUser,
+            data: {
+                userId: this.props.userId,
+                name: name,
+                avatar: avatar
+            }
+        }).then(res => {
+            var data = res.data;
+            if (data.success) {
+                alert("login successful");
+            } else {
+                alert("login failed");
+            }
+        }).catch(err => {
+            console.log(err);
+        });
+        event.preventDefault();
+    }
+    componentDidMount() {
+        let allConstants = this.allConstants;
+        axios({
+            method: 'POST',
+            url: allConstants.getUser,
+            data: {
+                userId: this.props.userId
+            }
+        }).then(res => {
+            var data = res.data;
+            if (data.status) {
+                this.setState({
+                    name: data.name,
+                    avatar: data.avatar
+                });
+            }
+        }).catch(err => {
+            console.log(err);
+        });
+    }
+    onClose = () => {
+        this.setState({ preview: null })
+    }
+
+    onCrop = (preview) => {
+        this.setState({ preview })
+    }
+
+    onBeforeFileLoad = (elem) => {
+        if (elem.target.files[0].size > 71680) {
+            alert("File is too big!");
+            elem.target.value = "";
         };
     }
     render() {
-        let {userInfo} = this.props;
-        let {showLogout} = this.state;
+
+        let { name, avatar, showInfo, showUserInfo } = this.state;
         return (
             <div className="container-fluid p-30">
                 <div className="container">
@@ -28,25 +126,49 @@ class Header extends Component {
                             {/* <Link className="iconbtn fa fa-comment" to='/chat'></Link> */}
                             {/* notification */}
                             {/* <div className="notif n3">3</div> */}
-                            {/* <Link className="iconbtn fa fa-bell"></Link> */} 
+                            {/* <Link className="iconbtn fa fa-bell"></Link> */}
 
                         </div>
                         <div className="col-sm-3 iconuser">
+                            <span>{name}</span>
+
                             <div className="avatar" onClick={this.onToggleLogout}>
-                                <img src={userInfo.avatar} className="img-circle" alt="avatar" width="40px" height="40px" />
+                                <img src={imgBg} className="img-circle" alt="avatar" width="40px" height="40px" />
                             </div>
-                            {showLogout ?
-                                <button className="btn-logout" onClick={this.handleLogout}>Login</button>
+                            {showInfo ?
+
+                                <div className="edituser">
+                                    <div className="box-edituser" onClick={this.OpenUserInfo}>Update Information</div>
+                                    <hr />
+                                    <div className="box-edituser" onClick={this.handleLogout}>Logout</div>
+                                </div>
+                                // <button className="btn-logout" onClick={this.handleLogout}>Logout</button>
+
                                 :
                                 ''
                             }
-                            <span>{userInfo.name}</span>
+
                         </div>
                         <div className="switchmode">
                             <input type="checkbox" />
                         </div>
                     </div>
                 </div>
+                <Modal isOpen={showUserInfo}>
+                    <ModalHeader>User Information</ModalHeader>
+                    <ModalBody>
+                        <div className="text-center img-user-info"><img src={imgBg} className="img-circle text-center" alt="avatar" width="60px" height="60px" /></div>
+                        <span>Name: </span>
+                        <div className="modal-name"><input type="text" className="form-control" required name="name" onChange={this.onChange} value={name} /></div>
+                        {/* <span>Avatar: </span>
+                        <div className="modal-name"><input type="file" className="form-control" required name="avatar" onChange={this.onChange} /></div>     */}
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button color="primary" onClick={this.EditUserInfo}>Edit</Button>
+                        <Button color="secondary" onClick={this.closeEditUserInfo}>Cancel</Button>
+
+                    </ModalFooter>
+                </Modal>
             </div>
         )
     }

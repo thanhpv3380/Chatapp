@@ -1,5 +1,9 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+//SHA1 
+import SHA1 from 'sha1';
+// Constants
+import Constants from './../../Constants';
 
 class Login extends Component {
     constructor(props) {
@@ -8,6 +12,8 @@ class Login extends Component {
             username: '',
             password: ''
         }
+        // instantiate the Constants
+        this.allConstants = new Constants();
     }
     onChange = (event) => {
         var target = event.target;
@@ -19,23 +25,25 @@ class Login extends Component {
     }
     onSubmit = (event) => {
         let { username, password } = this.state;
-
+        let allConstants = this.allConstants;
         this.setState({ password: '', username: '' });
         axios({
-            method: 'post',
-            url: 'http://localhost:3000/',
+            method: 'POST',
+            url: allConstants.login,
             data: {
                 username: username,
-                password: password
+                password: SHA1(password)
             }
         }).then(res => {
             var data = res.data;
-            if (data.isValid) {
+            if (data.status) {
                 console.log("login successful");
 
-                this.props.onSuccessLogin(data.user.userId)
+                this.props.onSuccessLogin(data.userId);
+                console.log(data.userId);
             } else {
                 // reload the page
+                console.log("login failed");
                alert("login failed");
             }
         }).catch(err => {

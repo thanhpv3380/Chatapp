@@ -1,16 +1,24 @@
 import React, { Component } from 'react'
-
+import imBg from './../../../images/bg-login.jpg';
+// Constants
+import Constants from './../../Constants';
 class RoomInfo extends Component {
+
+    constructor(props) {
+        super(props);
+        // instantiate the Constants
+        this.allConstants = new Constants();
+    }
     render() {
-        let {room, activeRoomId} = this.props;
+        let allConstants = this.allConstants;
+        let { room, activeRoomId } = this.props;
+        let lastMessage = room.lastMessage !== null ? room.lastMessage : { "Body": "", "time": "" };
         return (
-            <div className={(activeRoomId === room.roomId) ? 'chat_list active' : 'chat_list'} onClick={() => this.props.setSelectedRoomId(room.roomId)}>
-                <div className="chat_people">
-                    <div className="chat_img"> <img src={room.friendAvatar} className="img-circle" alt="avatar user" width="40px" height="40px" /> </div>
-                    <div className="chat_ib">
-                        <h5>{room.friendName}<span className="chat_date">{room.date}</span></h5>
-                        <p>{room.message}</p>
-                    </div>
+            <div className="chat_people">
+                <div className="chat_img"> <img src={imBg} className="img-circle" alt="avatar user" width="40px" height="40px" /> </div>
+                <div className="chat_ib">
+                    <h5>{room.name}<span className="chat_date">{allConstants.formatDates(lastMessage.time)}</span></h5>
+                    <p>{lastMessage.Body}</p>
                 </div>
             </div>
         )

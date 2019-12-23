@@ -111,32 +111,57 @@ var GetRoomByID =  function (roomID, done) {
     })
 };
 
-const getOnlineRoomsByUserId=function(userId, callback){
+const getRoomsByUserIdAndStatus=function(userId, compareRoomStatusFunc, callback){
     User.getRoomListByUserId(userId,(err, roomList)=>{
         if (err){
             console.log("cannot find room list of user having Id: "+userId)
             callback(err, roomList)
         }else{
-            onlineRoom=roomList.filter((room)=>room.online)
+            onlineRoom=roomList.filter(compareRoomStatusFunc)
             callback(err, onlineRoom)
         }
 
     })
 }
 
-const setAllRoomToOnline=function(userId){
-    User.getRoomListByUserId(userId, (err, roomList)=>{
-        if (err){
-            console.log("cannot find room list of user having Id: "+userId)
+const countOnlineUser=function(roomId, callback){
+    GetRoomByID(roomId,(err,room)=>{
+        if(err){
+            console.log("Error when getUserByID in countOnlineUser: ",err)
+            return callback(err, room)
         }else{
-            roomList.forEach((roomId)=>{
-                SetRoomStatus(roomId, true, (err, data)=>{
-                    //do nothing
-                })
-            })
+            members=room.members
+            count=members.reduce((sum, member)=> member.online?sum+1:sum,0)
+            callback(null, count)
         }
     })
 }
+
+
+
+const changeMemberOnlineStatus=function(roomId, userId, online,callback){
+    GetRoomByID(roomId,(err, room)=>{
+        if (err){
+            console.log("error when GetRoomById in getUserToOnline :", err)
+            return callback(err,room)
+        }
+        for (let i =0; i<room.members.length;i++){
+            if (room.members[i].userId==userId){
+                room.members[i].online=online
+            }
+        }
+        room.save(callback)
+    })       
+}
+
+// console.log("run")
+// countOnlineUser("5dfa00f9c8ebee3b30bdba18",(err,data)=>{
+//     console.log(err, data)
+// })
+
+// setUserToOnline("5dfa00f9c8ebee3b30bdba18","5df8a8176377113751905e66",(err, data)=>{
+//     console.log(err,data)
+// })
 
 //create(["5df8a8176377113751905e66","5dc994237ca7c207c3b36ba1"],(err, data)=>{console.log(data)}, "test room")
 // findByUserId("313131313131313131313132",(err, data)=>{
@@ -155,7 +180,8 @@ module.exports = {
     GetRoomStatus,
     SetRoomStatus,
     CreateMessage,
-    getOnlineRoomsByUserId,
-    setAllRoomToOnline
+    getRoomsByUserIdAndStatus,
+    changeMemberOnlineStatus,
+    countOnlineUser
 };
 

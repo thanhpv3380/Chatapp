@@ -1,8 +1,15 @@
 import React, { Component } from 'react';
+
+// components 
 import Login from './Login/Login';
 import Register from './Register/Register';
+
+// img
 import imgBg from './../../images/bg-login.jpg';
+
+// css
 import './Join.css';
+
 class Join extends Component {
     render() {
         return (

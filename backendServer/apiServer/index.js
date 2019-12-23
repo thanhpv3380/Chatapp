@@ -36,6 +36,6 @@ app.use(login)
 const rooms=require("./rooms")
 app.use(rooms)
 
-// app.listen(process.env.PORT || 3000, function () {
-//     console.log('Node.js listening ...');
-// });
+app.listen(process.env.PORT || 3000, function () {
+    console.log('Node.js listening ...');
+});

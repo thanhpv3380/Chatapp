@@ -1,6 +1,6 @@
 const io=require("socket.io-client")
 io({transports: ['websocket']})
-const socket=io.connect("http://127.0.0.1:3002", {reconnect: true});
+const socket=io.connect("http://127.0.0.1:3002");
 onlineRoom=[]
 console.log("online")
 socket.on("welcome",(msg)=>{
