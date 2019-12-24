@@ -9,9 +9,11 @@ class Message extends Component {
     }
     render() {
         let allConstants = this.allConstants;
+        console.log(JSON.parse(JSON.stringify(this.props.Messages)))
         return (
             <div className="msg_history">
                 {
+                /* {
                     this.props.messages.map((msg, index) => {
                         if (msg.From !== this.props.userId) {
                             return (
@@ -22,7 +24,7 @@ class Message extends Component {
                                     <div className="received_msg">
                                         <div className="received_withd_msg" >
                                             <p>{msg.Body}</p>
-                                            <span className="time_date" >{allConstants.formatDates(msg.time)}</span>
+                                            <span className="time_date" >{msg.time}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -32,13 +34,13 @@ class Message extends Component {
                                 <div className="outgoing_msg" key={index} >
                                     <div className="sent_msg" >
                                         <p> {msg.Body} </p>
-                                        <span className="time_date" >{allConstants.formatDates(msg.time)}</span>
+                                        <span className="time_date" >{msg.time}</span>
                                     </div>
                                 </div>
                             );
                         }
                     })
-                }
+                } */}
             </div>
         )
     }

@@ -14,7 +14,7 @@ import Constants from './../Constants';
 class Content extends Component {
     constructor(props) {
         super(props);
-        this.socket = io('http://localhost:3002');
+        this.socket = io('http://192.168.1.58:3002');
         this.state = {
             //onlineRooms có dạng ["room": ["userId-1","userId-2",....]]
             onlineRooms: {},
@@ -26,34 +26,56 @@ class Content extends Component {
         // instantiate the Constants
         this.allConstants = new Constants();
     }
+    componentDidMount() {
+        this.socket.on("welcome", (msg) => {
+            this.socket.emit("userId", this.props.userId);
+        });
+        this.socket.on("message", (data) => {
+            console.log('data value ', data);
+            // console.log(data)
+            // send the newly incoming message to the parent component 
+            this.setState({
+                onNewMessageArrival: data
+            });
+            console.log(this.state.onNewMessageArrival);
+        });
+        this.socket.on("iAmOnline", ({ userId, roomId }) => {
+            let onlineRooms = this.state.onlineRooms
+            if (onlineRooms.hasOwnProperty(roomId)) {
+                onlineRooms[roomId].push(userId)
+            } else {
+                onlineRooms[roomId] = [userId]
+            }
+            this.setState({
+                onlineRooms
+            })
+            console.log("content.js ---49: ", userId, roomId, JSON.stringify(onlineRooms))
+        });
+        this.socket.on("iAmOffline", ({ roomId, userId }) => {
+            // console.log(roomId)
+            let onlineRooms = this.state.onlineRooms
+            // console.log("content.js ---61 pre: ",this.state.onlineRooms[roomId])
+            // console.log(onlineRooms.hasOwnProperty(roomId), roomId)
+
+            if (onlineRooms.hasOwnProperty(roomId)) {
+                let room = onlineRooms[roomId]
+                let index = room.indexOf(userId);
+                // console.log("index found: ",index)
+                if (index !== -1) room.splice(index, 1);
+                onlineRooms[roomId] = room
+            }
+            this.setState({
+                onlineRooms
+            })
+            console.log("content.js ---72 after: ", JSON.stringify(this.state.onlineRooms))
+            // console.log("iAmOffline's data: ",roomId, userId)
+        })
+    }
     setSelectedRoomId = (id) => {
         console.log('id here in content: ', id);
         this.setState({
             selectedRoomId: id,
             showMessagePanel: true
-        });
-    }
-    componentDidMount() {
-        this.socket.on("welcome", (msg) => {
-            this.socket.emit("userId", this.props.userId);
-        });
-        this.socket.on("iAmOnline",({userId,roomId}) =>{
-            let onlineRooms=this.state.onlineRooms
-            if (onlineRooms.hasOwnProperty(roomId)){
-                onlineRooms[roomId].push(userId)
-            }else{
-                onlineRooms[roomId]=[userId]
-            }
-            this.setState({
-                onlineRooms
-            })
-        });
-        this.socket.on("message", (data) => {
-            console.log('data value ', data);
-            // send the newly incoming message to the parent component 
-            this.setState({
-                onNewMessageArrival: data
-            });
         });
     }
     render() {
@@ -78,8 +100,8 @@ class Content extends Component {
                             <div className='col-sm-6 p-0 content-mid'>
                                 {showMessagePanel ?
                                     <MessagesPanel
-                                        userId={userId}
                                         socket={socket}
+                                        userId={userId}
                                         selectedRoomId={selectedRoomId}
                                         onNewMessageArrival={onNewMessageArrival}
                                     />

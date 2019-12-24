@@ -13,7 +13,7 @@ class MessagesPanel extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            messages: [],
+            messages: {},
         }
         // instantiate the Constants
         this.allConstants = new Constants();
@@ -24,13 +24,16 @@ class MessagesPanel extends Component {
             this.loadConversation(this.props.selectedRoomId);
         this.scrollToBottom();
     }
-    componentDidUpdate(prevProps) {
-        if (this.props.selectedRoomId !== prevProps.selectedRoomId) {
-            console.log("change roomId", prevProps.selectedRoomId);
-            this.loadConversation(prevProps.selectedRoomId);
+    componentWillReceiveProps(nextProps) {
+        if (this.props.selectedRoomId !== nextProps.selectedRoomId) {
+            console.log("change roomId", nextProps.selectedRoomId);
+            this.loadConversation(nextProps.selectedRoomId);
         }
-        if (prevProps.onNewMessageArrival.roomId === this.props.selectedRoomId) {
-            this.setState({ messages: [...this.state.messages, { ...prevProps.onNewMessageArrival.Body }] });
+        
+        if (nextProps.onNewMessageArrival.roomId === this.props.selectedRoomId) {
+            let messages=this.state.messages
+                messages[this.props.selectedRoomId].push(nextProps.onNewMessageArrival)
+            this.setState({ messages });
         }
         this.scrollToBottom();
     }
@@ -42,7 +45,7 @@ class MessagesPanel extends Component {
     // load the conversation of the selected friend
     loadConversation(id) {
         let selectedRoomId = (id) ? id : '' // this.props.selectedRoomId ||
-        console.log('IN MESSAGE PANEL : selected friend id in ', selectedRoomId)
+        console.log('IN MESSAGE PANEL : selected friend id in ', selectedRoomId);
         let allConstants = this.allConstants;
         axios({
             method: 'POST',
@@ -60,9 +63,13 @@ class MessagesPanel extends Component {
                 newRooms = newRooms.sort((a, b) => {
                     return new Date(a.time) - new Date(b.time);
                 })
+                
+                let messages=this.state.messages
+                messages[this.props.selectedRoomId]=newRooms
                 this.setState({
-                    messages: newRooms
+                    messages
                 });
+                console.log(this.state.messages);
             }
         }).catch(err => {
             console.log(err);
@@ -70,8 +77,8 @@ class MessagesPanel extends Component {
     }
     render() {
         let { messages } = this.state;
-        let { userId, selectedRoomId, socket } = this.props;
-
+        let { userId, selectedRoomId, socket} = this.props;
+        console.log(messages[selectedRoomId])
         return (
             <div>
                 <div className="user-current" >
@@ -83,7 +90,7 @@ class MessagesPanel extends Component {
                 </div>
                 <div className="mesgs" id="mesgs">
                     <Message
-                        messages={messages}
+                        Messages={messages[selectedRoomId]}
                         userId={userId}
                     />
                     <div style={{ float: "left", clear: "both" }} ref={(el) => { this.messageEnd = el; }}></div>

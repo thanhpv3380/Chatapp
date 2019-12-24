@@ -1,7 +1,7 @@
 class Constants {
     constructor() {
         // all the URLs
-        this.url = 'http://localhost:3000';
+        this.url = 'http://192.168.1.58:3000';
         this.login = `${this.url}/`;
         this.register = `${this.url}/register`;
         this.getUser = `${this.url}/getUser`;

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import {IoIosSend} from 'react-icons/io';
-import {MdInsertEmoticon} from 'react-icons/md';
+import { IoIosSend } from 'react-icons/io';
+import { MdInsertEmoticon } from 'react-icons/md';
 class WriteMessage extends Component {
     constructor() {
         super();
@@ -21,7 +21,7 @@ class WriteMessage extends Component {
         let data = {
             time: new Date(),
             Body: chatText,
-            senderId: this.props.userId,
+            From: this.props.userId,
             roomId: this.props.selectedRoomId,
             type: "text"
         }
@@ -34,6 +34,7 @@ class WriteMessage extends Component {
         this.setState({ chatText: '' });
 
     }
+
     componentDidUpdate(prevProps) {
         if (this.props.selectedRoomId !== prevProps.selectedRoomId) {
             this.setState({ chatText: '' });
@@ -52,7 +53,7 @@ class WriteMessage extends Component {
                         className="form-control box-text"
                     >
                     </input>
-                    <IoIosSend className="btn-send btn-msg"/>
+                    <IoIosSend className="btn-send btn-msg" />
                     <MdInsertEmoticon className="btn-send btn-msg" />
                     {/* <div className="fa fa-paper-plane btn-type" onClick={this.submitMessage}></div> */}
 

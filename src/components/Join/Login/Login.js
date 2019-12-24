@@ -26,7 +26,6 @@ class Login extends Component {
     onSubmit = (event) => {
         let { username, password } = this.state;
         let allConstants = this.allConstants;
-        this.setState({ password: '', username: '' });
         axios({
             method: 'POST',
             url: allConstants.login,
