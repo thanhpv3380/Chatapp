@@ -21,7 +21,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended : false}));
 app.use((req,res,next)=>{
-    console.log(`a ${req.method} request from ${req.host}`)
+    console.log(`a ${req.method} request from ${req.ip}`)
     //console.log(req)
     next()
 })

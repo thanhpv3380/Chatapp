@@ -18,9 +18,9 @@ router.route('/')
     .post(function (req, res) {
         var username = req.body.username;
         var password = req.body.password;
-        console.log(username, password)
+        //console.log(username, password)
         user.Login(username, password, function (err, result) {
-            if (err || result == null) {
+            if (err || result == false) {
                 res.json({
                     'status': false
                 })
@@ -40,8 +40,8 @@ router.route('/register')
         var password = req.body.password;
         var name = req.body.name;
         var avatar = '';
-        console.log(username);
-        console.log(password);
+        // console.log(username);
+        // console.log(password);
 
         user.CheckUsername(username, function (data, err) {
             if (data == false) {
@@ -208,7 +208,7 @@ router.route('/searchUser')
                             var friend = [];
                             var notFriend = [];
                             var i = 0;
-                            console.log(pictures);
+                            //console.log(pictures);
                             while (i < data.length) {
                                 if (user.id == thisUserId) {
                                     i++;

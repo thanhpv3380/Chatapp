@@ -46,9 +46,11 @@ class Content extends Component {
             this.setState({
                 onlineRooms
             })
+            console.log("content.js ---49: ",onlineRooms)
         });
         this.socket.on("message", (data) => {
             console.log('data value ', data);
+            console.log(data)
             // send the newly incoming message to the parent component 
             this.setState({
                 onNewMessageArrival: data

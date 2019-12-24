@@ -4,7 +4,6 @@ const mongodb = require("../models/mongodb")
 
 module.exports = (io) => {
   io.on("connection", (socket) => {
-    console.log("connected")
     socket["userId"] = null;
     socket.emit("welcome", "wellcome message")
 
@@ -15,21 +14,24 @@ module.exports = (io) => {
       
       mongodb.Room.getRoomsByUserIdAndStatus(socket.userId, (room) => room.online == true, (err, onlineRooms) => {
         if (err) { console.log("getRoomsByUserIdAndStatus's error: ", err) }
-        else (
+        else {
           onlineRooms.forEach(roomId => {
             socket.join(roomId)
             socket.to(roomId).emit("iAmOnline", { "userId":socket.userId, roomId });
             mongodb.Room.changeMemberOnlineStatus(roomId, socket.userId, true, (err, data) => {
               if (err) console.log(err)
+              else{
+              }
             })
           })
-        )
+        }
       })
 
       // change offline rooms's user's online status
       mongodb.Room.getRoomsByUserIdAndStatus(socket.userId, (room) => room.online == false, (err, offlineRooms) => {
         if (err) { console.log("getRoomsByUserIdAndStatus's error: ", err) }
-        else (
+        else {
+          //console.log("offlineRooms---34: ",offlineRooms)
           offlineRooms.forEach(roomId => {
             socket.join(roomId)
             mongodb.Room.changeMemberOnlineStatus(roomId, socket.userId, true, (err, data) => {
@@ -46,11 +48,12 @@ module.exports = (io) => {
             })
 
           })
-        )
+        }
       })
     })
 
     socket.on("send", (msg) => {
+      //console.log(msg)
       socket.to(msg.roomId).emit("message",msg)
       mongodb.Room.CreateMessage(msg.roomId,
         msg.senderId,
@@ -59,6 +62,7 @@ module.exports = (io) => {
         msg.time,
         (err, savedMsg) => {
           if (err) console.log(err)
+          else console.log("")//savedMsg)
         })
     })
 

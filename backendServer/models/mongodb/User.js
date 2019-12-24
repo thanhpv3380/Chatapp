@@ -59,7 +59,7 @@ const UpdateUser = function (userID, username, name, password, avatar, done) {
         'password': password,
         'avatar': avatar
     }, function () {
-        console.log(('Update complete'));
+        //console.log(('Update complete'));
         return done(null, true);
     })
 }
@@ -112,7 +112,6 @@ const getRoomListByUserId=function(userId,callback){
     User.findOne({'_id':userId}).exec((err,data)=>{
         if (err) {callback(err, data)}
         else{
-            console.log("userId: ",userId)
             callback(err, data.room_list)
         }
     })

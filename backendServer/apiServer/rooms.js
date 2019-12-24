@@ -15,7 +15,7 @@ router.route('/rooms')
                 })
                 return
             } else {
-                console.log(data)
+                //console.log(data)
                 res.json({
                     "status": true,
                     "rooms": data.map((room) => {
@@ -76,7 +76,7 @@ router.route('/getMessage')
                     }
                     res.json({
                         'status': true,
-                        'messages': data
+                        'messages': data.reverse()
                     })
                 }
             }

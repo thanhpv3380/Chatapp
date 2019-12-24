@@ -90,7 +90,7 @@ var SetRoomStatus = function(roomID, status, done){
          
             'online': status
     }, function () {
-         console.log(('Update complete'));
+         //console.log(('Update complete'));
          return done(null, true);
     })
 }
@@ -119,8 +119,13 @@ const getRoomsByUserIdAndStatus=function(userId, compareRoomStatusFunc, callback
             console.log("cannot find room list of user having Id: "+userId)
             callback(err, roomList)
         }else{
-            onlineRoom=roomList.filter(compareRoomStatusFunc)
-            callback(err, onlineRoom)
+            Room.find().where('_id').in(roomList).exec((err1, data)=>{
+                if(err) return console.log("error at Room.js 129: ",err1)
+                //console.log("Room----124: ",data)
+                fitRooms=data.filter(compareRoomStatusFunc)
+                callback(err, fitRooms.map((fitRoom)=>fitRoom._id))
+            })
+            
         }
 
     })
