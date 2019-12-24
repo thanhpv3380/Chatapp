@@ -1,6 +1,6 @@
 const mongodb = require("../models/mongodb")
 
-
+let sockets={}
 
 module.exports = (io) => {
   io.on("connection", (socket) => {
@@ -8,6 +8,7 @@ module.exports = (io) => {
     socket.emit("welcome", "wellcome message")
 
     socket.on("userId", (userId) => {
+      sockets[userId]=socket.id
       //users.push({ userId, socket });
       socket.userId=userId
       //inform every user's online room about users'online event, change rooms's user's online status 
@@ -66,9 +67,21 @@ module.exports = (io) => {
         })
     })
 
+    socket.on("friendRequest",({from, to})=>{
+      if(sockets.hasOwnProperty(to)){
+        io.to(sockets[to]).emit("newFriendRequest",{from})
+      }
+      //add to wait list
+    })
+
+    socket.on("exceptFriendRequest",({friendId})=>{
+      
+    } )
+
     socket.on("disconnect", function () {
       //auto left all joined rooms
       //set all room in DB to offline and return all room id
+      delete sockets[socket.userId]
       mongodb.Room.getRoomsByUserIdAndStatus(socket.userId, (room) => true, (err, onlineRooms) => {
         if (err) { console.log("getRoomsByUserIdAndStatus's error: ", err) }
         else {

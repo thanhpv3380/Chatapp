@@ -13,7 +13,9 @@ import Constants from './../Constants';
 class Content extends Component {
     constructor(props) {
         super(props);
-        this.socket = io('http://localhost:3002');
+        // instantiate the Constants
+        this.allConstants = new Constants();
+        this.socket = io(this.allConstants.webSocketServer);
         this.state = {
             //onlineRooms có dạng ["room": ["userId-1","userId-2",....]]
             onlineRooms: {},
@@ -22,8 +24,6 @@ class Content extends Component {
             selectedRoomId:'',
             showMessagePanel: false
         };
-        // instantiate the Constants
-        this.allConstants = new Constants();
     }
     setSelectedRoomId = (id) => {
         console.log('id here in content: ', id);
@@ -46,16 +46,35 @@ class Content extends Component {
             this.setState({
                 onlineRooms
             })
-            console.log("content.js ---49: ",onlineRooms)
+            console.log("content.js ---49: ",userId, roomId, JSON.stringify(onlineRooms))
         });
         this.socket.on("message", (data) => {
             console.log('data value ', data);
-            console.log(data)
+            // console.log(data)
             // send the newly incoming message to the parent component 
             this.setState({
                 onNewMessageArrival: data
             });
         });
+        this.socket.on("iAmOffline",({roomId, userId})=>{
+            // console.log(roomId)
+            let onlineRooms=this.state.onlineRooms
+            // console.log("content.js ---61 pre: ",this.state.onlineRooms[roomId])
+            // console.log(onlineRooms.hasOwnProperty(roomId), roomId)
+            
+            if (onlineRooms.hasOwnProperty(roomId)){
+                let room=onlineRooms[roomId]
+                let index = room.indexOf(userId);
+                // console.log("index found: ",index)
+                if (index !== -1) room.splice(index, 1);
+                onlineRooms[roomId]=room
+            }
+            this.setState({
+                onlineRooms
+            })
+            console.log("content.js ---72 after: ",JSON.stringify(this.state.onlineRooms))
+            // console.log("iAmOffline's data: ",roomId, userId)
+        })
     }
     render() {
         let { userId } = this.props;
