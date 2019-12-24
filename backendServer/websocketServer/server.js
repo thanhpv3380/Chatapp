@@ -55,9 +55,9 @@ module.exports = (io) => {
 
     socket.on("send", (msg) => {
       //console.log(msg)
-      socket.to(msg.roomId).emit("message",msg)
+      io.to(msg.roomId).emit("message",msg)
       mongodb.Room.CreateMessage(msg.roomId,
-        msg.senderId,
+        msg.from,
         msg.type,
         msg.Body,
         msg.time,
