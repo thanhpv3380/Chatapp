@@ -9,9 +9,11 @@ class Message extends Component {
     }
     render() {
         let allConstants = this.allConstants;
+        console.log("lsadfhjjhj",this.props.Messages?this.props.Messages[0].Body:[])
         return (
             <div className="msg_history">
                 {
+                /* {
                     this.props.messages.map((msg, index) => {
                         if (msg.From !== this.props.userId) {
                             return (
@@ -38,7 +40,7 @@ class Message extends Component {
                             );
                         }
                     })
-                }
+                } */}
             </div>
         )
     }

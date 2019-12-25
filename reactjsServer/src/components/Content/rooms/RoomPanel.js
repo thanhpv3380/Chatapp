@@ -14,32 +14,32 @@ class RoomPanel extends Component {
         // instantiate the Constants
         this.allConstants = new Constants();
     }
-    componentDidUpdate(nextProps) {
-        if (nextProps.onNewMessageArrival && (!this.props.onNewMessageArrival || nextProps.onNewMessageArrival.roomId !== this.props.onNewMessageArrival.roomId)) {
-            let newRooms = [...this.state.rooms];
-            newRooms.forEach((room) => {
-                if (room.roomId === nextProps.onNewMessageArrival.roomId) {
-                    let lastMessage = room.lastMessage !== null ? room.lastMessage : { "Body": "", "time": "" };
-                    // adjust the necessary field if the roomId matches
-                    lastMessage.Body = nextProps.onNewMessageArrival.Body;
-                    lastMessage.time = nextProps.onNewMessageArrival.time;
-                    // lastMessage.senderId = nextProps.onNewMessageArrival.senderId;
+    componentWillReceiveProps(nextProps) {
+        let newRooms = [...this.state.rooms];
+        newRooms.forEach((room) => {
+            if (room.roomId == nextProps.onNewMessageArrival.roomId) {
+                let lastMessage = room.lastMessage !== null ? room.lastMessage : { "Body": "", "time": "" };
+                // adjust the necessary field if the roomId matches
+                lastMessage.Body = nextProps.onNewMessageArrival.Body;
+                lastMessage.time = nextProps.onNewMessageArrival.time;
+                // lastMessage.senderId = nextProps.onNewMessageArrival.senderId;
 
-                    // if the message is from other non active room
-                    // if (room.read === true) {
-                    //     room.read = false
-                    //     this.saveReadStatusToDb(room, false)
-                    // }
-                }
-            })
-            newRooms = newRooms.sort((a, b) => {
-                let x = a.lastMessage !== null ? a.lastMessage : { "time": "" };
-                let y = b.lastMessage !== null ? b.lastMessage : { "time": "" };
-                return new Date(y.time) - new Date(x.time);
+                // if the message is from other non active room
+                // if (room.read === true) {
+                //     room.read = false
+                //     this.saveReadStatusToDb(room, false)
+                // }
+            }
+        })
+        // newRooms = newRooms.sort((a, b) => {
+        //     let x = a.lastMessage !== null ? a.lastMessage : { "time": "" };
+        //     let y = b.lastMessage !== null ? b.lastMessage : { "time": "" };
+        //     return new Date(y.time) - new Date(x.time);
 
-            });
-            this.setState({ rooms: newRooms });
-        }
+        // });
+        this.setState({ rooms: newRooms });
+        console.log(this.state.rooms);
+
     }
     componentDidMount() {
         this.loadrooms();
@@ -56,7 +56,7 @@ class RoomPanel extends Component {
         }).then(res => {
             var data = res.data;
             if (data.status) {
-                console.log(data.rooms, "getRooms");
+                console.log("getRooms", data.rooms);
                 this.setState({ rooms: data.rooms });
             }
             else {
