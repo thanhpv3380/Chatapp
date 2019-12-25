@@ -1,11 +1,8 @@
 class Constants {
     constructor() {
         // all the URLs
-        this.serverHost= 'http://localhost:'
-        this.apiPort='3000'
-        this.websocketPort='3002'
-        this.url = this.serverHost+this.apiPort;
-        this.webSocketServer = this.serverHost+this.websocketPort;
+        this.link='localhost';
+        this.url = `http://${this.link}:3000`;
         this.login = `${this.url}/`;
         this.register = `${this.url}/register`;
         this.getUser = `${this.url}/getUser`;
@@ -13,6 +10,7 @@ class Constants {
         this.checkUsername = `${this.url}/register/{username}`;
         this.getConversation = `${this.url}/getMessage`;
         this.getRooms = `${this.url}/rooms`;
+        this.webSocketServer = `http://${this.link}:3002`;
 
         // initialize
         this.theWeek = makeFormattedWeek();

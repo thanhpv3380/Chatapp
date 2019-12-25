@@ -20,6 +20,7 @@ const RoomSchema = new mongoose.Schema({
             type: Date,
             default: Date.now()
         },
+        seen:[{userId: ObjectId}]
     }],
     online: Boolean
 });
@@ -53,7 +54,8 @@ var CreateMessage =  function (roomID, From, Type, Body, time, done) {
         From: From,
         Type: Type,
         Body: Body,
-        time: time
+        time: time,
+        seen: [{'userId':From}]
     }
     GetRoomByID(roomID, function (err1,data) {
         if (err1) {return done(err1,null)}

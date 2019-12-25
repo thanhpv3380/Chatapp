@@ -10,10 +10,46 @@ var PictureSchema = new mongoose.Schema({
 });
 let Picture = mongoose.model('Picture', PictureSchema);
 
-
+// var insert = (picType, ownerId, body, done) => {
+//     /*
+//     insert into DB
+//     done is a callback function
+//      */
+//     //if id is not specified, generate one
+//     if (id == null) {
+//         id = genPicId(ownerId)
+//     }
+//     //check whether the id is existed or not
+//     Picture.findOne({'_id': id}).exec((err, data) => {
+//         if (err) {
+//             console.log(err)
+//         } else {
+//             //if it is existed, generate a new one and do it all again
+//             if (data) {
+//                 id = genPicId(ownerId)
+//                 insert(picType, ownerId, body, id, done)
+//             }
+//             //if it isn't existed, save the picture in to db and log to console
+//             else {
+//                 let picture = new Picture()
+//                 picture._id = id
+//                 picture.Type = picType
+//                 picture.body = body
+//                 picture.save((error, data) => {
+//                     if (error) {
+//                         console.log(error)
+//                     } else {
+//                         console.log("insert successed, _id: " + data._id);
+//                         return done(data._id);
+//
+//                     }
+//                 })
+//             }
+//         }
+//     })
+// }
   // Trả về _id của picture vừa insert 
 var insert = function (Type, body, Group, done) {
-    //console.log("PICTURE-----------------insert")
     let picture = new Picture({
         Type: Type,
         body: body,
@@ -27,11 +63,8 @@ var insert = function (Type, body, Group, done) {
 }
 // Trả về đối tượng picture có các thuộc tính _id, Type, body, group 
 var GetPictureByID = function(pictureID, done){
-    //console.log("PICTURE-----------------29", pictureID)
-    //temp code
-    return done(null, "")
     Picture.findById(pictureID, function (err, doc) {
-        if(err) console.log(err);
+        //if(err) console.log(err);
         return done(err, doc);
 
     })
@@ -39,47 +72,36 @@ var GetPictureByID = function(pictureID, done){
 
 // Trả về mảng picture có các thuộc tính _id, Type, body, group
 var GetStickerByName = function(stickerName, done){
-    //console.log("PICTURE-----------------40")
     Picture.find({'Type': 'Sticker', 'group': stickerName}, function (err, doc) {
-        if(err) console.log(err);
-        return done(err, doc);
-
-    })
-}  
-
-// Trả về mảng gồm tất cả các sticker 
-var GetAllSticker = function(done){
-    //console.log("PICTURE-----------------50")
-    Picture.find({'Type': 'Sticker'}, function (err, doc) {
-        if(err) return done(err);
+       // if(err) console.log(err);
         return done(err, doc);
 
     })
 }
 
+
+
+// Trả về mảng gồm tất cả các sticker 
+var GetAllSticker = function(done){
+    Picture.find({'Type': 'Sticker'}, function (err, doc) {
+        //if(err) return done(err);
+        return done(err, doc);
+
+    })
+}
+var GetAllAvatar = function(done){
+    Picture.find({'Type': 'Avatar'}, function (err, doc) {
+        //if(err) return done(err);
+        return done(err, doc);
+
+    })
+}
+
+
 module.exports = {
     insert,
     GetPictureByID,
     GetAllSticker,
-    GetStickerByName
+    GetStickerByName,
+    GetAllAvatar
 };
-
-
-//-------------------------------******TEST******------------------------------
-
-// insert('Sticker', '11sdwe11', 'Cat', function (data) {
-//     console.log(data);
-//
-// })
-
-// GetStickerByName('Cat', function (data) {
-//     console.log(data);
-// })
-
-// GetPictureByID('5df5acb2d1bd6f03c9c0d7cb', function (err, data) {
-//     console.log(data)
-// })
-
-// GetPictureByID('5df5acb2d1bd6f03c9c0d7cb', function (data) {
-//                                  console.log(data)
-// })

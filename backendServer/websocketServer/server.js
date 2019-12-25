@@ -1,5 +1,6 @@
 const mongodb = require("../models/mongodb")
-
+const User = require("../models/mongodb").User
+const Room = require("../models/mongodb").Room
 let sockets={}
 
 module.exports = (io) => {
@@ -8,7 +9,7 @@ module.exports = (io) => {
     socket.emit("welcome", "wellcome message")
 
     socket.on("userId", (userId) => {
-      sockets[userId]=socket.id
+      sockets[userId]=socket
       //users.push({ userId, socket });
       socket.userId=userId
       //inform every user's online room about users'online event, change rooms's user's online status 
@@ -55,7 +56,6 @@ module.exports = (io) => {
 
     socket.on("send", (msg) => {
       //console.log(msg)
-      io.to(msg.roomId).emit("message",msg)
       mongodb.Room.CreateMessage(msg.roomId,
         msg.from,
         msg.type,
@@ -63,21 +63,51 @@ module.exports = (io) => {
         msg.time,
         (err, savedMsg) => {
           if (err) console.log(err)
-          else console.log("")//savedMsg)
+          else io.to(msg.roomId).emit("message",msg)
         })
     })
 
-    socket.on("friendRequest",({from, to})=>{
+    socket.on("friendRequest",({ from, to})=>{
+      console.log("friendRequest: ",from, to)
       if(sockets.hasOwnProperty(to)){
-        io.to(sockets[to]).emit("newFriendRequest",{from})
+        io.to(sockets[to].id).emit("newFriendRequest",from)
       }
-      //add to wait list
+      User.addToWaitList(to, from,(err, data)=>{
+        if (err) console.log("Error when addToWaitList at socket.on friendRequest: ", err)
+      })
     })
 
-    socket.on("exceptFriendRequest",({friendId})=>{
-      
+    socket.on("acceptFriendRequest",({userId, acceptedFriendId})=>{
+      Room.create([userId, acceptedFriendId],(err, room)=>{
+        if (err) console.log("Error when creat Room at socket.on exceptFriendRequest: ", err)
+        else{
+          socket.join(room._id)
+          if (sockets.hasOwnProperty(acceptedFriendId)){
+            sockets[acceptedFriendId].join(room._id)
+          }
+          io.to(room._id).emit("newRoom",{
+            'roomId': room._id,
+            'name': room.name,
+            'members': room.members,
+            'lastMessage': []
+          })
+          Room.CreateMessage(room._id,userId, "Text", "We are now friends", new Date(), (err1, message)=>{
+            if (err1) console.log("Error when creatMessage at socket.on exceptFriendRequest: ", err)
+            else{
+              io.to(room._id).emit("message",{
+                'from':message.From,
+                'type':message.Type,
+                'Body':message.Body,
+                'time':message.time,
+                'seen':[]
+              })
+            }
+          })
+        }
+      })
     } )
 
+    socket
     socket.on("disconnect", function () {
       //auto left all joined rooms
       //set all room in DB to offline and return all room id

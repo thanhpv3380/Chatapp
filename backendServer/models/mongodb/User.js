@@ -117,6 +117,18 @@ const getRoomListByUserId=function(userId,callback){
     })
 }
 
+const addToWaitList= function(userId, waitFriendId, callback){
+    User.findById(userId).exec((err, user)=>{
+        if (err) {
+            console.log("Error when findById at addToWaitList: ",err)
+            callback(err, user)
+        }else{
+            user.wait_list.push(waitFriendId)
+            user.save(callback)
+        }
+    })
+}
+
 // var changePassword = function(userId, password, done){
 //     User.updateOne({_id: userId}, {
 //         password
@@ -134,7 +146,9 @@ module.exports = {
     Login,
     CheckUsername,
     GetInfoUser,
-    UpdateUser
+    UpdateUser,
+    addToWaitList,
+    User
 };
 
 //  --------------****************TEST****************---------------

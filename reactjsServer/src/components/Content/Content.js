@@ -22,16 +22,17 @@ class Content extends Component {
             onlineRooms: {},
             socket: '',
             onNewMessageArrival: '',
-            selectedRoomId:'',
+            selectedRoomId: '',
             showMessagePanel: false
         };
+
     }
     componentDidMount() {
         this.socket.on("welcome", (msg) => {
             this.socket.emit("userId", this.props.userId);
         });
         this.socket.on("message", (data) => {
-            console.log('data value ', data);
+            //console.log('data value ', data);
             // console.log(data)
             // send the newly incoming message to the parent component 
             this.setState({
@@ -73,33 +74,17 @@ class Content extends Component {
     }
     setSelectedRoomId = (id) => {
         console.log('id here in content: ', id);
-        this.setState({
-            selectedRoomId: id,
-            showMessagePanel: true
-        });
-        this.socket.on("iAmOffline",({roomId, userId})=>{
-            // console.log(roomId)
-            let onlineRooms=this.state.onlineRooms
-            // console.log("content.js ---61 pre: ",this.state.onlineRooms[roomId])
-            // console.log(onlineRooms.hasOwnProperty(roomId), roomId)
-            
-            if (onlineRooms.hasOwnProperty(roomId)){
-                let room=onlineRooms[roomId]
-                let index = room.indexOf(userId);
-                // console.log("index found: ",index)
-                if (index !== -1) room.splice(index, 1);
-                onlineRooms[roomId]=room
-            }
+        if (id !== this.state.selectedRoomId)
+        {
             this.setState({
-                onlineRooms
-            })
-            console.log("content.js ---72 after: ",JSON.stringify(this.state.onlineRooms))
-            // console.log("iAmOffline's data: ",roomId, userId)
-        })
+                selectedRoomId: id,
+                showMessagePanel: true
+            });
+        }
     }
     render() {
         let { userId } = this.props;
-        let { selectedRoomId, onNewMessageArrival, onlineRooms, showMessagePanel} = this.state;
+        let { selectedRoomId, onNewMessageArrival, onlineRooms, showMessagePanel } = this.state;
         let socket = this.socket;
         return (
             <div>
@@ -125,10 +110,10 @@ class Content extends Component {
                                         onNewMessageArrival={onNewMessageArrival}
                                     />
                                     :
-                                    <Welcome/>
-                                }   
+                                    <Welcome />
+                                }
                             </div>
-                            <ContentRight userId={userId}/>
+                            <ContentRight userId={userId} />
                         </div>
                     </div>
                 </div>
