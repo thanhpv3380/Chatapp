@@ -1,7 +1,7 @@
 class Constants {
     constructor() {
         // all the URLs
-        this.link='localhost';
+        this.link='192.168.133.109';
         this.url = `http://${this.link}:3000`;
         this.login = `${this.url}/`;
         this.register = `${this.url}/register`;
@@ -10,7 +10,11 @@ class Constants {
         this.checkUsername = `${this.url}/register/{username}`;
         this.getConversation = `${this.url}/getMessage`;
         this.getRooms = `${this.url}/rooms`;
+        this.getListFriend = `${this.url}/listFriend`;
+        this.getListWait = `${this.url}/listWait`;
+        this.updateReadStatus = `${this.url}/updateReadStatus`;
         this.webSocketServer = `http://${this.link}:3002`;
+        this.search = `${this.url}/searchUser`;
 
         // initialize
         this.theWeek = makeFormattedWeek();

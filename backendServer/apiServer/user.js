@@ -43,10 +43,11 @@ router.route('/register')
         // console.log(username);
         // console.log(password);
 
-        User.CheckUsername(username, function (data, err) {
+        User.CheckUsername(username, function (err, data) {
             if (data == false) {
-                User.CreateUser(username, name, password, avatar, function (err, result) {
-                    if (result == null || err) {
+                User.CreateUser(username, name, password, avatar, function (err1, result) {
+                    console.log("49---user.js: ", err1, data)
+                    if (result == null || err1) {
                         res.json({
                             'status': false
                         })
@@ -105,7 +106,7 @@ router.route('/getUser')
                         res.json({
                             'status': true,
                             name: data.name,
-                            avatar: picture
+                            avatar: picture.body
                         })
                     }
 
@@ -144,20 +145,23 @@ router.route('/listFriend')
                             let friendList = [];
                             let i = 0;
                             while (i < data.length) {
-                                if (User.id == thisUserId) {
-                                    i++;
+                                if (listUser[i].id == thisUserId) {
+                                    i++
+                                    continue
                                 }
                                 let users = {
                                     id: listUser[i]._id,
                                     name: listUser[i].name,
                                     avatar: ''
                                 };
-                                let index = pictures.indexOf(listUser[i]._id);
+                                //console.log("h:------------ ",pictures[i].body)
+                                let index = pictures.findIndex((pic)=>listUser[i].avatar==pic._id);
                                 if (index >= 0) {
-                                    users.avatar = pictures[i];
+                                    users.avatar = pictures[index].body;
                                 }
+                                //console.log(thisUser, data[i])
                                 if (thisUser.friend_list.indexOf(data[i]._id) >= 0) {
-                                    friendList.push(data[i]);
+                                    friendList.push(users);
 
                                 }
                                 i++;
@@ -206,20 +210,21 @@ router.route('/listWait')
                             let waitList = [];
                             let i = 0;
                             while (i < data.length) {
-                                if (User.id == thisUserId) {
+                                if (listUser[i]._id == thisUserId) {
                                     i++;
+                                    continue
                                 }
                                 let users = {
                                     id: listUser[i]._id,
                                     name: listUser[i].name,
                                     avatar: ''
                                 };
-                                let index = pictures.indexOf(listUser[i]._id);
+                                let index = pictures.findIndex((pic)=>listUser[i].avatar==pic._id);
                                 if (index >= 0) {
-                                    users.avatar = pictures[i];
+                                    users.avatar = pictures[index].body;
                                 }
                                 if (thisUser.wait_list.indexOf(data[i]._id) >= 0) {
-                                    waitList.push(data[i]);
+                                    waitList.push(users);
                                 }
                                 i++;
                             }
@@ -260,7 +265,7 @@ router.route('/searchUser')
     .post((req, res) => {
         let name = req.body.name;
         let thisUserId = req.body.userId;
-        console.log("name: ",name,"userIs: ", thisUserId)
+        console.log("name: ", name, "userIs: ", thisUserId)
         // let name = '';
         // let thisUserId = '5dcc0e22dee9df188728edb2';
         User.FindUserByName(name, function (err1, data) {
@@ -289,22 +294,26 @@ router.route('/searchUser')
                             let i = 0;
                             //console.log(pictures);
                             while (i < data.length) {
-                                if (User.id == thisUserId) {
-                                    i++;
+                                //console.log(data[i]._id == thisUserId)
+                                if (data[i]._id == thisUserId) {
+                                    i++
+                                    continue
                                 }
                                 let users = {
-                                    id: listUser[i]._id,
-                                    name: listUser[i].name,
-                                    avatar: ''
+                                    'id': listUser[i]._id,
+                                    'name': listUser[i].name,
+                                    'avatar': 'some default pic',
+                                    'request': false
                                 };
-                                let index = pictures.indexOf(listUser[i]._id);
+                                let index = pictures.findIndex((pic)=>listUser[i].avatar==pic._id);
                                 if (index >= 0) {
-                                    users.avatar = pictures[i];
+                                    users.avatar = pictures[index].body;
                                 }
-                                if (thisUser.friend_list.indexOf(User.id) >= 0) {
+                                //console.log(thisUser.friend_list.indexOf(User.id) >= 0,thisUser.wait_list.indexOf(users.id) >= 0)
+                                if (thisUser.friend_list.indexOf(users.id) >= 0) {
                                     friend.push(users);
 
-                                } if (thisUser.wait_list.indexOf(users.id) >= 0) {
+                                } else if (thisUser.wait_list.indexOf(users.id) >= 0) {
                                     users.request = true;
                                     notFriend.push(users);
                                 } else {
@@ -383,24 +392,25 @@ router.route('/acceptRequestAddFriend')
 router.route('/editUser')
     .post((req, res) => {
         let userId = req.body.userId;
-        let password = req.body.password;
+        let password = null//req.body.password;
         let name = req.body.name;
         let avatar = req.body.avatar;
-        Picture.insert('Picture', avatar, function (err, pictureId) {
+        Picture.insert('Avatar', avatar, null, function (err, pictureId) {
             if (err) {
                 res.json({
                     'status': false
                 })
             } else {
                 User.UpdateUser(userId, name, password, pictureId, function (result1, result2) {
-                    if (result1 == null) {
+                    if (result1 != null) {
                         res.json({
                             'status': false
                         })
+                    } else {
+                        res.json({
+                            'status': result2
+                        })
                     }
-                    res.json({
-                        'status': result2
-                    })
                 })
             }
         })

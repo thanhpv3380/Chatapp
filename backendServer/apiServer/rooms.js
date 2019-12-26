@@ -1,8 +1,7 @@
 const express = require('express'),
     router = express.Router();
 
-const Room = require('../../backendServer/models/mongodb/Room');
-
+const { User, Room, Picture } = require('../models/mongodb')
 router.route('/rooms')
     .post((req, res) => {
         var userId = req.body.userId;
@@ -16,17 +15,49 @@ router.route('/rooms')
                 return
             } else {
                 //console.log(data)
-                res.json({
-                    "status": true,
-                    "rooms": data.map((room) => {
-                        return {
-                            "roomId": room._id,
-                            "name": room.name,
-                            "members": room.members,
-                            "lastMessage": room.messages.length > 0 ? room.messages.reduce((nearestMessage, cur) => cur.time > nearestMessage.time ? cur : nearestMessage) : null
+                //change room name to user's name
+                for (let i in data) {
+                    for (let j in data[i].members) {
+                        if (data[i].members[j].userId != userId) {
+                            //console.log("1: ",data[i].members[j].userId)
+                            User.GetInfoUser(data[i].members[j].userId, (err, user) => {
+                                //console.log("err1: ",err, user)
+                                Picture.GetPictureByID(user.avatar, (err2, pic) => {
+                                    data[i]["name"] = user.name
+                                    data[i].avatar = pic==null?"default pic":pic.body
+                                    //console.log(data[i].name, data[i].avatar)
+                                    
+                                    if (i == data.length - 1) {
+                                        //console.log(data)
+                                        res.json({
+                                            "status": true,
+                                            "rooms": data.map((room) => {
+                                                return {
+                                                    "avatar": room.avatar,
+                                                    "roomId": room._id,
+                                                    "name": room.name,
+                                                    "members": room.members,
+                                                    "lastMessage": room.messages.length > 0 ? room.messages.reduce((nearestMessage, cur) => cur.time > nearestMessage.time ? cur : nearestMessage) : null,
+                                                    "online": room.online
+                                                }
+                                            })
+                                        })
+                                    }
+
+
+
+                                })
+                            })
+                            break;
                         }
-                    })
-                })
+                    }
+
+
+                
+
+
+                }
+
             }
         })
     })

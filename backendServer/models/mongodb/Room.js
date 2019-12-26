@@ -115,10 +115,10 @@ var GetRoomByID =  function (roomID, done) {
 };
 
 const getRoomsByUserIdAndStatus=function(userId, compareRoomStatusFunc, callback){
-    //console.log("115 ",userId)
+    //console.log("115 Room: ",userId)
     User.getRoomListByUserId(userId,(err, roomList)=>{
         if (err){
-            console.log("cannot find room list of user having Id: "+userId)
+            //console.log("cannot find room list of user having Id: "+userId)
             callback(err, roomList)
         }else{
             Room.find().where('_id').in(roomList).exec((err1, data)=>{

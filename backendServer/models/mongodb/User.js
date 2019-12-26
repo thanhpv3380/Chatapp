@@ -51,12 +51,10 @@ var FindUserByName = function (name, done) {
     User.find({ name: new RegExp(name,'ig')}, done);
 };
 
-const UpdateUser = function (userID, username, name, password, avatar, done) {
+const UpdateUser = function (userID, name, password, avatar, done) {
     User.updateOne({_id: userID}, {
-
-        'username': username,
         'name': name,
-        'password': password,
+        //'password': password,
         'avatar': avatar
     }, function () {
         //console.log(('Update complete'));
@@ -110,9 +108,10 @@ var GetInfoUser = function(_idUser, done){
 
 const getRoomListByUserId=function(userId,callback){
     User.findOne({'_id':userId}).exec((err,data)=>{
+        //console.log("User---112: ",data)
         if (err) {callback(err, data)}
         else{
-            callback(err, data.room_list)
+            callback(err, data==null?[]:data.room_list)
         }
     })
 }
@@ -129,6 +128,36 @@ const addToWaitList= function(userId, waitFriendId, callback){
     })
 }
 
+const addFriend=function(userId, newFriendId, callback){
+    User.findById(userId).exec((err, user)=>{
+        if (err) {
+            // console.log("Error when findById at addToWaitList: ",err)
+            // console.log("134---",user)
+            callback(err, user)
+        }else{
+            //console.log("136----User: ",user)
+            user.friend_list.push(newFriendId)
+            let index=user.wait_list.indexOf(newFriendId)
+            if (index>=0){user.wait_list.splice(index, 1)}
+            user.save(callback)
+        }
+    })
+}
+
+const addRoom=function(userId, roomId, callback){
+    User.findById(userId).exec((err, user)=>{
+        if (err) {
+            // console.log("Error when findById at addToWaitList: ",err)
+            // console.log("134---",user)
+            callback(err, user)
+        }else{
+            //console.log("136----User: ",user)
+            user.room_list.push(roomId)
+            user.save(callback)
+        }
+    })
+}
+
 // var changePassword = function(userId, password, done){
 //     User.updateOne({_id: userId}, {
 //         password
@@ -137,6 +166,7 @@ const addToWaitList= function(userId, waitFriendId, callback){
 //          return done(null, true);
 //     })
 // }
+
 
 module.exports = {
     getRoomListByUserId,
@@ -148,7 +178,9 @@ module.exports = {
     GetInfoUser,
     UpdateUser,
     addToWaitList,
-    User
+    User,
+    addFriend,
+    addRoom
 };
 
 //  --------------****************TEST****************---------------
