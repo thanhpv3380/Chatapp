@@ -80,7 +80,7 @@ var CreateMessage =  function (roomID, From, Type, Body, time, done) {
 // Trả về mảng gồm 'number' tin nhắn trong room. ví dụ cần lấy 5 tin nhắn thì number = 5.
 var GetMessengerInRoom = function(roomID, done){
     Room.findById(roomID, 'messages', function (err, doc) {
-        //console.log(doc)
+        console.log(roomID, err, doc)
         if(err) console.log(err);
         return done(err, doc.messages);
 
