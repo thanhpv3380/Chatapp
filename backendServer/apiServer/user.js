@@ -40,8 +40,8 @@ router.route('/register')
         let password = req.body.password;
         let name = req.body.name;
         let avatar = '';
-        // console.log(username);
-        // console.log(password);
+        console.log(username);
+        console.log(password);
 
         User.CheckUsername(username, function (err, data) {
             if (data == false) {
@@ -169,7 +169,7 @@ router.route('/listFriend')
                             res.json({
                                 'status': true,
                                 'friendList': friendList.map((friend) => ({
-                                    'userId': friend._id,
+                                    'userId': friend.id,
                                     'name': friend.name,
                                     'avatar': friend.avatar
                                 }))
@@ -231,7 +231,7 @@ router.route('/listWait')
                             res.json({
                                 'status': true,
                                 'waitList': waitList.map((friend) => ({
-                                    'userId': friend._id,
+                                    'userId': friend.id,
                                     'name': friend.name,
                                     'avatar': friend.avatar
                                 }))

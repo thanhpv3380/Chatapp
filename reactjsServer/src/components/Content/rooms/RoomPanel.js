@@ -61,6 +61,9 @@ class RoomPanel extends Component {
             this.state.listWait.push(data);
         })
         this.loadrooms();
+        this.props.socket.on("newRoom",()=>{
+            this.loadrooms();
+        })
     }
     loadrooms() {
         let allConstants = this.allConstants;
@@ -96,7 +99,7 @@ class RoomPanel extends Component {
         this.props.setSelectedRoomId(id);
         // set active room id for highlighting purpose
         this.setState({ activeRoomId: id });
-        this.changeReadStatus(id);
+        //this.changeReadStatus(id);
     }
     onChange = (event) => {
         var target = event.target;

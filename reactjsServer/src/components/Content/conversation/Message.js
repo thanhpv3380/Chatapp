@@ -18,6 +18,7 @@ class Message extends Component {
     render() {
         let allConstants = this.allConstants;
         let messages = this.props.Messages?this.props.Messages:[];
+        console.log(messages)
         return (
             <div className="msg_history" id="message">
                 {

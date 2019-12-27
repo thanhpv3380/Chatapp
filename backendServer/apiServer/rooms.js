@@ -22,6 +22,7 @@ router.route('/rooms')
                             //console.log("1: ",data[i].members[j].userId)
                             User.GetInfoUser(data[i].members[j].userId, (err, user) => {
                                 //console.log("err1: ",err, user)
+                                //console.log("26: ",data, user,userId)
                                 Picture.GetPictureByID(user.avatar, (err2, pic) => {
                                     data[i]["name"] = user.name
                                     data[i].avatar = pic==null?"default pic":pic.body
@@ -105,6 +106,7 @@ router.route('/getMessage')
                         }
                         length--;
                     }
+                    console.log("109 ",data)
                     res.json({
                         'status': true,
                         'messages': data.reverse()

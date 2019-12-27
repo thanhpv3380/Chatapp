@@ -100,6 +100,7 @@ var CheckUsername = function (username, done) {
 // Trả về name, avatar, wait_list, friend_list, room_list của user
 var GetInfoUser = function(_idUser, done){
     User.findById(_idUser, 'name avatar friend_list wait_list room_list', function (err, doc) {
+        //console.log("User  103: ",_idUser)
         if(err) console.log(err);
         return done(err, doc);
 
@@ -130,6 +131,7 @@ const addToWaitList= function(userId, waitFriendId, callback){
 
 const addFriend=function(userId, newFriendId, callback){
     User.findById(userId).exec((err, user)=>{
+        //console.log("found: ",user, userId)
         if (err) {
             // console.log("Error when findById at addToWaitList: ",err)
             // console.log("134---",user)

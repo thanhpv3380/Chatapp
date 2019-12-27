@@ -57,8 +57,9 @@ module.exports = (io) => {
 
     socket.on("send", (msg) => {
       console.log(msg)
-      mongodb.Room.CreateMessage(msg.roomId,
-        msg.from,
+      mongodb.Room.CreateMessage(
+        msg.roomId,
+        msg.From,
         msg.type,
         msg.Body,
         msg.time,
@@ -124,6 +125,7 @@ module.exports = (io) => {
           Room.CreateMessage(room._id, userId, "Text", "We are now friends", new Date(), (err1, message) => {
             if (err1) console.log("Error when creatMessage at socket.on exceptFriendRequest: ", err)
             else {
+              io.to(room._id).emit("newRoom", {})
               io.to(room._id).emit("message", {
                 'from': message.From,
                 'type': message.Type,
@@ -137,7 +139,9 @@ module.exports = (io) => {
       })
     })
 
-    socket
+    socket.on("seen",({userId, roomId, messageId})=>{
+      console.log()
+    })
     socket.on("disconnect", function () {
       //auto left all joined rooms
       //set all room in DB to offline and return all room id

@@ -24,6 +24,7 @@ class ListWait extends Component {
     onSubmitAccept = (from, to) => {
         console.log(to);
         this.props.onAcceptedFriendRequest(from, to);
+        console.log(to)
         this.props.socket.emit("acceptFriendRequest", {
             "userId" : from,
             "acceptedFriendId": to
