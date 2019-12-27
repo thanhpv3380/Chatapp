@@ -68,9 +68,11 @@ router.route('/register')
         })
     })
 
-router.get('/resgister/:username', (req, res) => {
+router.get('/register/:username', (req, res) => {
     let username = req.params.username;
+    //console.log("73: ",username)
     User.CheckUsername(username, function (err, dataResult) {
+        //console.log("75", err, dataResult)
         if (dataResult == false) {
             res.json({
                 'status': false

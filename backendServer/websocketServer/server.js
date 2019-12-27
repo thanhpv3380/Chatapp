@@ -140,8 +140,15 @@ module.exports = (io) => {
     })
 
     socket.on("seen",({userId, roomId, messageId})=>{
-      console.log()
+      mongodb.Room.markAsSeen(roomId, messageId, userId,(err, data)=>{
+        if(err) console.log("Error when markAsSeen: ",err)
+        else{
+          socket.to(roomId).emit("seen",{userId, messageId, roomId})
+        }
+      })
     })
+
+
     socket.on("disconnect", function () {
       //auto left all joined rooms
       //set all room in DB to offline and return all room id

@@ -20,7 +20,7 @@ const RoomSchema = new mongoose.Schema({
             type: Date,
             default: Date.now()
         },
-        seen:[{userId: ObjectId}]
+        seen:[ObjectId]
     }],
     online: Boolean
 });
@@ -55,7 +55,7 @@ var CreateMessage =  function (roomID, From, Type, Body, time, done) {
         Type: Type,
         Body: Body,
         time: time,
-        seen: [{'userId':From}]
+        seen: [From]
     }
     GetRoomByID(roomID, function (err1,data) {
         if (err1) {return done(err1,null)}
@@ -172,7 +172,22 @@ const markAsSeen=function(roomId, messageId, userId, callback){
             console.log(`Room with Id ${roomId} is not found at markAsSeen`)
             callback(`Room with Id ${roomId} is not found at markAsSeen (callback)`, room)
         }else {
-            
+            let messages=room.messages
+            for(let i in messages){
+                if(messages[i]._id==messageId){
+                    let index=messages[i].seen.indexOf(ObjectId(userId))
+                    if (index==-1){
+                        Room.update(
+                            {'messages._id': messageId},
+                            {$set:{'messages.seen':[...messages[i].seen,ObjectId(userId)]}},
+                            callback
+                        )
+                    }else{
+                        callback(`Error User ${userId} have seen message ${messageId}`, room)
+                    }
+                    break
+                }
+            }
         }
     })
 }
@@ -205,6 +220,7 @@ module.exports = {
     CreateMessage,
     getRoomsByUserIdAndStatus,
     changeMemberOnlineStatus,
-    countOnlineUser
+    countOnlineUser,
+    markAsSeen
 };
 
