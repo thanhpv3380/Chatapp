@@ -17,7 +17,7 @@ var UserSchema = new mongoose.Schema({
     },
     avatar: {
         type: String,
-        default: ''
+        default: '5e05f461853d7208bbbbf130'
     },
     friend_list: [String],
     wait_list: [String],
@@ -38,7 +38,7 @@ const CreateUser = function (username, name, password, avatar, done) {
         username: username,
         name: name,
         password: password,
-        avatar: avatar
+        //avatar: avatar
     })
 
     user.save((err, data) => {

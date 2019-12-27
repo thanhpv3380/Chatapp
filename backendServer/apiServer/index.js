@@ -42,6 +42,9 @@ app.use(login)
 const rooms=require("./rooms")
 app.use(rooms)
 
+const picture=require("./picture")
+app.use(picture)
+
  app.listen(process.env.PORT || 3000, function () {
      console.log('Node.js listening ...');
  });

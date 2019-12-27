@@ -163,6 +163,20 @@ const changeMemberOnlineStatus=function(roomId, userId, online,callback){
     })       
 }
 
+const markAsSeen=function(roomId, messageId, userId, callback){
+    Room.findById(roomId,(err1, room)=>{
+        if(err1) {
+            console.log("Error when findById at markAsSeen: ", err)
+            callback(err1, room)
+        }else if(room==null){
+            console.log(`Room with Id ${roomId} is not found at markAsSeen`)
+            callback(`Room with Id ${roomId} is not found at markAsSeen (callback)`, room)
+        }else {
+            
+        }
+    })
+}
+
 // console.log("run")
 // countOnlineUser("5dfa00f9c8ebee3b30bdba18",(err,data)=>{
 //     console.log(err, data)
