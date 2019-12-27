@@ -22,7 +22,7 @@ router.route('/rooms')
                             //console.log("1: ",data[i].members[j].userId)
                             User.GetInfoUser(data[i].members[j].userId, (err, user) => {
                                 //console.log("err1: ",err, user)
-                                console.log("\n\n\n26: ",data, user,userId)
+                                //console.log("\n\n\n26: ",data, user,userId)
                                 Picture.GetPictureByID(user.avatar, (err2, pic) => {
                                     data[i]["name"] = user.name
                                     data[i].avatar = pic==null?"default pic":pic.body

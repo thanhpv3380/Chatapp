@@ -15,7 +15,7 @@ class RoomInfo extends Component {
         let userStatus = '';
         for (let i in this.props.onlineRooms){
             if (this.props.onlineRooms[i].roomId === room.roomId)  {
-                userStatus = 'user-status';
+                userStatus = this.props.onlineRooms[i].online?'user-status':'';
                 break;
             }
         }

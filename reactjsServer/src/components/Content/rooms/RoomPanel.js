@@ -94,11 +94,11 @@ class RoomPanel extends Component {
         });
     }
 
-    setSelectedRoomId = (id) => {
+    setSelectedRoomId = (room) => {
         // pass the selected room id augmented with logged in userid to the parent 
-        this.props.setSelectedRoomId(id);
+        this.props.setSelectedRoomId(room);
         // set active room id for highlighting purpose
-        this.setState({ activeRoomId: id });
+        this.setState({ activeRoomId: room.roomId });
         //this.changeReadStatus(id);
     }
     onChange = (event) => {
@@ -243,7 +243,7 @@ class RoomPanel extends Component {
                                 showMessage ?
                                     rooms.map((room) => {
                                         return (
-                                            <div className={activeRoomId === room.roomId ? 'chat_list active_chat' : 'chat_list'} key={room.roomId} onClick={() => this.setSelectedRoomId(room.roomId)}>
+                                            <div className={activeRoomId === room.roomId ? 'chat_list active_chat' : 'chat_list'} key={room.roomId} onClick={() => this.setSelectedRoomId(room)}>
                                                 <RoomInfo
                                                     room={room}
                                                     userId={userId}

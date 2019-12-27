@@ -100,7 +100,7 @@ var CheckUsername = function (username, done) {
 // Trả về name, avatar, wait_list, friend_list, room_list của user
 var GetInfoUser = function(_idUser, done){
     User.findById(_idUser, 'name avatar friend_list wait_list room_list', function (err, doc) {
-        console.log("User  103: ",_idUser, err,doc)
+        //console.log("User  103: ",_idUser, err,doc)
         if(err) console.log(err);
         return done(err, doc);
 

@@ -19,6 +19,7 @@ module.exports = (io) => {
         else {
           onlineRooms.forEach(roomId => {
             socket.join(roomId)
+            console.log(roomId)
             socket.to(roomId).emit("iAmOnline", { "userId": socket.userId, roomId });
             mongodb.Room.changeMemberOnlineStatus(roomId, socket.userId, true, (err, data) => {
               if (err) console.log(err)
@@ -88,7 +89,8 @@ module.exports = (io) => {
               'avatar': user.avatar
             })
           }
-        })
+        })               
+
       }
       User.addToWaitList(to, from, (err, data) => {
         if (err) console.log("Error when addToWaitList at socket.on friendRequest: ", err)
@@ -96,7 +98,7 @@ module.exports = (io) => {
     })
 
     socket.on("acceptFriendRequest", ({ userId, acceptedFriendId }) => {
-      console.log("94---socket server:", userId, acceptedFriendId)
+      //console.log("94---socket server:", userId, acceptedFriendId)
       User.addFriend(userId, acceptedFriendId, (err, data) => {
         if (err) console.log("Error when addFriend at socket.on exceptFriendRequest: ", err)
       })
@@ -164,12 +166,18 @@ module.exports = (io) => {
                   roomId,
                   "userId": socket.userId
                 })
+              }else{
+
+            //dòng lẹnh sau chỉ hoạt động với room 2 người
+            mongodb.Room.SetRoomStatus(roomId, false, (err, data) => {
+            })
               }
             })
             //change in online status in DB
             mongodb.Room.changeMemberOnlineStatus(roomId, socket.userId, false, (err, data) => {
               if (err) console.log(err)
               else {
+                //console.log("173", data)
                 //nothing yet
                 console.log("")
               }
