@@ -80,7 +80,7 @@ var CreateMessage =  function (roomID, From, Type, Body, time, done) {
 // Trả về mảng gồm 'number' tin nhắn trong room. ví dụ cần lấy 5 tin nhắn thì number = 5.
 var GetMessengerInRoom = function(roomID, done){
     Room.findById(roomID, 'messages', function (err, doc) {
-        console.log(roomID, err, doc)
+        // console.log(roomID, err, doc)
         if(err) console.log(err);
         return done(err, doc.messages);
 
@@ -88,6 +88,7 @@ var GetMessengerInRoom = function(roomID, done){
 }
 
 var SetRoomStatus = function(roomID, status, done){
+    console.log(`Room 91,set room ${roomID} to ${status}`)
     Room.updateOne({_id: roomID}, {
          
             'online': status
@@ -105,7 +106,6 @@ var GetRoomStatus = function(roomID, done){
     })
 }
 
-
 var GetRoomByID =  function (roomID, done) {
     Room.findById(roomID, 'members isOnline messages', function (err, doc) {
         if(err) console.log(err);
@@ -117,11 +117,13 @@ var GetRoomByID =  function (roomID, done) {
 const getRoomsByUserIdAndStatus=function(userId, compareRoomStatusFunc, callback){
     //console.log("115 Room: ",userId)
     User.getRoomListByUserId(userId,(err, roomList)=>{
+        //console.log("120 Room: ",err, roomList)
         if (err){
             //console.log("cannot find room list of user having Id: "+userId)
             callback(err, roomList)
         }else{
             Room.find().where('_id').in(roomList).exec((err1, data)=>{
+                //console.log("126 Room: ",err1,data)
                 if(err) return console.log("error at Room.js 129: ",err1)
                 //console.log("Room----124: ",data)
                 fitRooms=data.filter(compareRoomStatusFunc)
@@ -145,8 +147,6 @@ const countOnlineUser=function(roomId, callback){
         }
     })
 }
-
-
 
 const changeMemberOnlineStatus=function(roomId, userId, online,callback){
     GetRoomByID(roomId,(err, room)=>{

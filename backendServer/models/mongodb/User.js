@@ -17,7 +17,7 @@ var UserSchema = new mongoose.Schema({
     },
     avatar: {
         type: String,
-        default: '5e05f461853d7208bbbbf130'
+        default: "5e08da39e74ae959ebb6ec54"
     },
     friend_list: [String],
     wait_list: [String],

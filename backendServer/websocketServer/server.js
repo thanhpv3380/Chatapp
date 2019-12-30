@@ -19,7 +19,7 @@ module.exports = (io) => {
         else {
           onlineRooms.forEach(roomId => {
             socket.join(roomId)
-            console.log(roomId)
+            console.log("server 22: getOnlineRoom found: ", roomId)
             socket.to(roomId).emit("iAmOnline", { "userId": socket.userId, roomId });
             mongodb.Room.changeMemberOnlineStatus(roomId, socket.userId, true, (err, data) => {
               if (err) console.log(err)
@@ -37,20 +37,25 @@ module.exports = (io) => {
           //console.log("offlineRooms---36: ",offlineRooms)
           offlineRooms.forEach(roomId => {
             socket.join(roomId)
+            console.log("server 40, getOfflineRoom found: ", offlineRooms)
             mongodb.Room.changeMemberOnlineStatus(roomId, socket.userId, true, (err, data) => {
               if (err) console.log(err)
-            })
-            mongodb.Room.countOnlineUser(roomId, (err, count) => {
-              if (err) {
-                console.log("Error when countOnlineUser: ", err)
-              } else if (count == 1) {
-                //console.log("46---server",count)
-                mongodb.Room.SetRoomStatus(roomId, true, (err, data) => {
-                  //notthing
+              else{
+                mongodb.Room.countOnlineUser(roomId, (err, count) => {
+                  console.log('server 48, countOnline user of ^: ',count)
+                  if (err) {
+                    console.log("Error when countOnlineUser: ", err)
+                  } else if (count == 2) {
+                    //console.log("46---server",count)
+                    mongodb.Room.SetRoomStatus(roomId, true, (err, data) => {
+                      socket.to(roomId).emit("iAmOnline", { "userId": socket.userId, roomId });
+                    })
+                  }
                 })
+    
               }
             })
-
+            
           })
         }
       })
@@ -89,7 +94,7 @@ module.exports = (io) => {
               'avatar': user.avatar
             })
           }
-        })               
+        })
 
       }
       User.addToWaitList(to, from, (err, data) => {
@@ -141,11 +146,11 @@ module.exports = (io) => {
       })
     })
 
-    socket.on("seen",({userId, roomId, messageId})=>{
-      mongodb.Room.markAsSeen(roomId, messageId, userId,(err, data)=>{
-        if(err) console.log("Error when markAsSeen: ",err)
-        else{
-          socket.to(roomId).emit("seen",{userId, messageId, roomId})
+    socket.on("seen", ({ userId, roomId, messageId }) => {
+      mongodb.Room.markAsSeen(roomId, messageId, userId, (err, data) => {
+        if (err) console.log("Error when markAsSeen: ", err)
+        else {
+          socket.to(roomId).emit("seen", { userId, messageId, roomId })
         }
       })
     })
@@ -158,30 +163,33 @@ module.exports = (io) => {
       mongodb.Room.getRoomsByUserIdAndStatus(socket.userId, (room) => true, (err, onlineRooms) => {
         if (err) { console.log("getRoomsByUserIdAndStatus's error: ", err) }
         else {
+          console.log("Server 167: getAllRoom found: ", onlineRooms)
           onlineRooms.forEach(roomId => {
+             //change in online status in DB
+             mongodb.Room.changeMemberOnlineStatus(roomId, socket.userId, false, (err, data) => {
+              if (err) console.log(err)
+              else {
+                //console.log("173", data)
+                //nothing yet
+                console.log(`     changed ${socket.userId} to offline`)
+              }
+            })
             //inform left room event
             mongodb.Room.countOnlineUser(roomId, (err, count) => {
+              console.log( "server 180, count onlineUser found: ",count)
               if (count > 1) {
                 io.in(roomId).emit("iAmOffline", {
                   roomId,
                   "userId": socket.userId
                 })
-              }else{
-
-            //dòng lẹnh sau chỉ hoạt động với room 2 người
-            mongodb.Room.SetRoomStatus(roomId, false, (err, data) => {
-            })
+              } else {
+                console.log("server 187,  less or equal 1 online user in roomId: ", roomId)
+                //dòng lẹnh sau chỉ hoạt động với room 2 người
+                mongodb.Room.SetRoomStatus(roomId, false, (err, data) => {
+                })
               }
             })
-            //change in online status in DB
-            mongodb.Room.changeMemberOnlineStatus(roomId, socket.userId, false, (err, data) => {
-              if (err) console.log(err)
-              else {
-                //console.log("173", data)
-                //nothing yet
-                console.log("")
-              }
-            })
+           
           })
         }
       })

@@ -13,6 +13,7 @@ class Constants {
         this.getListFriend = `${this.url}/listFriend`;
         this.getListWait = `${this.url}/listWait`;
         this.updateReadStatus = `${this.url}/updateReadStatus`;
+        this.getAllStickers = `${this.url}/getAllStickers`;
         this.webSocketServer = `http://${this.link}:3002`;
         this.search = `${this.url}/searchUser`;
 

@@ -47,13 +47,26 @@ class RoomPanel extends Component {
                 //     this.saveReadStatusToDb(room, false)
                 // }
             }
-        })
+            let check = -1;
+            for (let i in nextProps.onlineRooms){
+                //console.log(i);    
+                if (nextProps.onlineRooms[i].roomId === room.roomId) {
+                    room.online = true;
+                    check = i;
+                    break;
+                }
+            }
+            if (check === -1) room.online = false;
+
+            
+        })   
         // newRooms = newRooms.sort((a, b) => {
         //     let x = a.lastMessage !== null ? a.lastMessage : { "time": "" };
         //     let y = b.lastMessage !== null ? b.lastMessage : { "time": "" };
         //     return new Date(y.time) - new Date(x.time);
 
         // });
+        //console.log(newRooms);
         this.setState({ rooms: newRooms });
     }
     componentDidMount() {
@@ -66,6 +79,7 @@ class RoomPanel extends Component {
         })
     }
     loadrooms() {
+        console.log("load room");
         let allConstants = this.allConstants;
         // call the back end to get rooms
         axios({
@@ -118,7 +132,7 @@ class RoomPanel extends Component {
             }
         }).then(res => {
             var data = res.data;
-            console.log("data", data);
+            //console.log("data", data);
             if (data.status) {
                 this.setState({
                     friendSearch: data.friend,
@@ -127,7 +141,7 @@ class RoomPanel extends Component {
             } else {
                 alert('search failed');
             }
-            console.log(this.state.friendSearch, this.state.notFriendSearch);
+            //console.log(this.state.friendSearch, this.state.notFriendSearch);
         }).catch(err => {
             console.log(err);
         });
@@ -178,7 +192,7 @@ class RoomPanel extends Component {
                 console.log(data);
             }
         }).catch(err => {
-            console.log(err);
+            //console.log(err);
         });
         event.preventDefault();
 
