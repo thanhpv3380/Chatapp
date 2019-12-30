@@ -47,6 +47,8 @@ class Message extends Component {
                                     //console.log("sticker");
                                 }
                             }
+
+                            // body=msg.Body
                         }
                         else if (msg.Type === 'Text') {
                             body = msg.Body;

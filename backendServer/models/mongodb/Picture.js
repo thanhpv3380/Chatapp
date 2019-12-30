@@ -97,8 +97,10 @@ var GetAllAvatar = function(done){
     })
 }
 
+// insert("Sticker", "","QooBee",(err, data)=>{console.log(err, data)})
 
 module.exports = {
+    Picture,
     insert,
     GetPictureByID,
     GetAllSticker,

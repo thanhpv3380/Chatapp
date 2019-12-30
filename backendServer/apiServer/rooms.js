@@ -66,7 +66,7 @@ router.route('/rooms')
 router.route('/getMessage')
     .post((req, res) => {
         // var roomId = req.body.roomId;
-        var time = new Date();
+        var time = new Date(req.body.time);
         var limit = req.body.limit;
         var roomId = req.body.roomId;
         console.log(time, limit, roomId)
@@ -91,7 +91,7 @@ router.route('/getMessage')
                 }
 
                 messages.sort(compare);
-                if (messages.length <= 10) {
+                if (messages.length <= limit) {
                     res.json({
                         'status': true,
                         messages
@@ -100,6 +100,7 @@ router.route('/getMessage')
                     var data = [];
                     var length = messages.length - 1;
                     while (limit > 0) {
+                        console.log(messages.length, length,limit, typeof messages[length].time,typeof time)
                         if (messages[length].time <= time) {
                             data.push(messages[length]);
                             limit--;
