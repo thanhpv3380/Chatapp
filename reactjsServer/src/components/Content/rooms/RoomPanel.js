@@ -47,27 +47,32 @@ class RoomPanel extends Component {
                 //     this.saveReadStatusToDb(room, false)
                 // }
             }
-            let check = -1;
-            for (let i in nextProps.onlineRooms){
-                //console.log(i);    
-                if (nextProps.onlineRooms[i].roomId === room.roomId) {
-                    room.online = true;
-                    check = i;
-                    break;
-                }
-            }
-            if (check === -1) room.online = false;
-
             
         })   
+        this.setState({ rooms: newRooms });
+        let rooms = this.state.rooms;
+        //console.log(this.props.onlineRooms);
+        for (let i in rooms ){
+            let j = this.props.onlineRooms.indexOf(rooms[i].roomId);
+            if (j >= 0) {
+                //console.log("online");
+                rooms[i].online = true;
+            }
+            else 
+            {
+                //console.log("offline");
+                rooms[i].online = false;  
+            }
+        }
+        //console.log("new Rooms", rooms);
+        this.setState({ rooms });
         // newRooms = newRooms.sort((a, b) => {
         //     let x = a.lastMessage !== null ? a.lastMessage : { "time": "" };
         //     let y = b.lastMessage !== null ? b.lastMessage : { "time": "" };
         //     return new Date(y.time) - new Date(x.time);
 
         // });
-        //console.log(newRooms);
-        this.setState({ rooms: newRooms });
+       
     }
     componentDidMount() {
         this.props.socket.on("newFriendRequest", (data) => {
@@ -79,7 +84,7 @@ class RoomPanel extends Component {
         })
     }
     loadrooms() {
-        console.log("load room");
+        //console.log("load room");
         let allConstants = this.allConstants;
         // call the back end to get rooms
         axios({
@@ -96,7 +101,7 @@ class RoomPanel extends Component {
                 this.setState({ rooms: rooms });
                 let onlineRooms = [];
                 for (let i in rooms){
-                    if (rooms[i].online) onlineRooms.push(rooms[i]);
+                    if (rooms[i].online) onlineRooms.push(rooms[i].roomId);
                 }
                 this.props.getOnlineRooms(onlineRooms);
             }
@@ -113,7 +118,8 @@ class RoomPanel extends Component {
         this.props.setSelectedRoomId(room);
         // set active room id for highlighting purpose
         this.setState({ activeRoomId: room.roomId });
-        //this.changeReadStatus(id);
+        this.changeReadStatus(room.roomId);
+
     }
     onChange = (event) => {
         var target = event.target;
@@ -189,7 +195,7 @@ class RoomPanel extends Component {
                 this.setState({
                     listWait: data.waitList
                 })
-                console.log(data);
+                //console.log(data);
             }
         }).catch(err => {
             //console.log(err);
@@ -211,24 +217,23 @@ class RoomPanel extends Component {
             listWait: list
         })
     }
-    // function to change the room status from read / unread
-    // changeReadStatus(id) {
-    //     let allConstants = this.allConstants;
-    //     axios({
-    //         method: 'POST',
-    //         url: allConstants.updateReadStatus,
-    //         data: {
-    //             userId: this.props.userInfo.userId,
-    //             roomId: id,
-    //             read: true,
-    //             time: new Date()
-    //         }
-    //     }).then((response) => {
-    //         console.log('update status success');
-    //     }).catch((err) => {
-    //         console.log('update status failed', err);
-    //     })
-    // }
+    //function to change the room status from read / unread
+    changeReadStatus(id) {
+        let rooms = this.state.rooms;
+        let message = ''
+        for (let i in rooms){
+            if (rooms[i].roomId === id){
+                message = rooms[i].lastMessage._id;
+                break;
+            }
+        }
+        let data = {
+            userId : this.props.userId,
+            roomId: id,
+            messageId: message
+        }
+        this.props.socket.emit('seen', data);
+    }
     render() {
         let { userId, setSelectedRoomId, socket, onlineRooms } = this.props;
         let btnLeft = 'btn-left';  
@@ -262,7 +267,6 @@ class RoomPanel extends Component {
                                                     room={room}
                                                     userId={userId}
                                                     setSelectedRoomId={setSelectedRoomId}
-                                                    onlineRooms={onlineRooms}
                                                 />
                                             </div>
                                         )

@@ -110,8 +110,17 @@ module.exports = (io) => {
         (err, savedMsg) => {
           if (err) console.log(err)
           else {
-            io.to(msg.roomId).emit("message", msg)
-            console.log(msg)
+            let newMsg={
+              "roomId": msg.roomId,
+              "messageId": savedMsg._id,
+              "From": msg.From,
+              "Type": msg.Type,
+              "Body": msg.Body,
+              "time": msg.time,
+              "seen": savedMsg.seen
+            }
+            io.to(msg.roomId).emit("message", newMsg)
+            console.log(newMsg)
           }
         })
     })
@@ -185,9 +194,11 @@ module.exports = (io) => {
     })
 
     socket.on("seen", ({ userId, roomId, messageId }) => {
+      console.log(`seen from ${userId} at room ${roomId}`)
       mongodb.Room.markAsSeen(roomId, messageId, userId, (err, data) => {
         if (err) console.log("Error when markAsSeen: ", err)
         else {
+          console.log(`seened ${userId} at room ${roomId}`)
           socket.to(roomId).emit("seen", { userId, messageId, roomId })
         }
       })

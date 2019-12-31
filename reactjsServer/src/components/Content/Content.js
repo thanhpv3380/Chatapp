@@ -19,19 +19,18 @@ class Content extends Component {
         this.socket = io(this.allConstants.webSocketServer);
         this.state = {
             //onlineRooms có dạng ["room": ["userId-1","userId-2",....]]
-            onlineRooms: null,
-            offlineRooms: null,
+            onlineRooms: [],
             socket: '',
             onNewMessageArrival: '',
             selectedRoom: '',
             showMessagePanel: false,
             switchmode: '',
-            colorTheme: 'default-theme' 
+            colorTheme: 'default-theme'
         };
     }
     getOnlineRooms = (data) => {
         this.setState({
-            onlineRooms : data
+            onlineRooms: data
         })
     }
     componentDidMount() {
@@ -41,9 +40,17 @@ class Content extends Component {
         this.socket.on("message", (data) => {
             console.log('data value ', data);
             // let status = true;
-            // send the newly incoming message to the parent component 
-            // if (data.roomId !== selectedRoomId) status = false;
-
+            //send the newly incoming message to the parent component 
+            //console.log(this.state.selectedRoom)
+            if (data.roomId === this.state.selectedRoom.roomId){
+                console.log("seen");
+                let seenInfo = {
+                    userId: this.props.userId,
+                    roomId: data.roomId,
+                    messageId: data.messageId
+                }
+                this.socket.emit("seen", seenInfo);
+            }
             this.setState({
                 onNewMessageArrival: data
             });
@@ -52,64 +59,48 @@ class Content extends Component {
         this.socket.on("iAmOnline", ({ userId, roomId }) => {
             console.log(`get Online message from ${userId} at ${roomId}`);
             let onlineRooms = this.state.onlineRooms;
-            // if (onlineRooms.hasOwnProperty(roomId)) {
-            //     onlineRooms[roomId].push(userId)
-            // } else {
-            //     onlineRooms[roomId] = [userId]
-            // }
-            let check=false
-            for (let i in onlineRooms){
-                if (onlineRooms[i].roomId === roomId)  {
-                    onlineRooms[i].online=true
-                    check=true
+
+            let check = false;
+            for (let i in onlineRooms) {
+                if (onlineRooms[i] === roomId) {
+                    check = true
                     break;
                 }
             }
-            // if(check==false){
-
-            // }
-            console.log(`modified onlineRoom after online: ${onlineRooms}`)
+            if (check === false) {
+                onlineRooms.push(roomId);
+            }
+            // console.log(`modified onlineRoom after online: ${onlineRooms}`)
             this.setState({
                 onlineRooms
             })
-            //console.log("content.js ---49: ", userId, roomId, JSON.stringify(onlineRooms));
         });
         this.socket.on("iAmOffline", ({ roomId, userId }) => {
             console.log(`get Offline message from ${userId} at ${roomId}`);
             let onlineRooms = this.state.onlineRooms;
-            // console.log("content.js ---61 pre: ",this.state.onlineRooms[roomId])
-            // console.log(onlineRooms.hasOwnProperty(roomId), roomId)
-
-            // if (onlineRooms.hasOwnProperty(roomId)) {
-            //     let room = onlineRooms[roomId]
-            //     let index = room.indexOf(userId);
-            //     // console.log("index found: ",index)
-            //     if (index !== -1) room.splice(index, 1);
-            //     onlineRooms[roomId] = room
-            //     if(onlineRooms[roomId].length === 0){
-            //         delete onlineRooms[roomId]
-            //     }
-            // }
-            console.log(`unmodified onlineRoom after ${userId} offline: ${onlineRooms} `)
-            for (let i in onlineRooms){
-                if (onlineRooms[i].roomId === roomId)  {
-                    onlineRooms[i].online=false
-                    console.log(onlineRooms)
+            //console.log(onlineRooms);
+            for (let i in onlineRooms) {
+                if (onlineRooms[i] === roomId) {
+                    //console.log(i);
+                    onlineRooms.splice(i, 1);
                     break;
                 }
             }
-            console.log(`modified onlineRoom after ${userId} online: ${onlineRooms}`)
+            //console.log(onlineRooms);
+            // console.log(`modified onlineRoom after ${userId} online: ${onlineRooms}`)
             this.setState({
                 onlineRooms
             })
             //console.log("content.js ---72 after: ", JSON.stringify(this.state.onlineRooms))
             // console.log("iAmOffline's data: ",roomId, userId)
         })
+        // this.socket.on("seen", ({ userId, messageId, roomId }) => {
+        //     console.log(`get Offline message from ${userId} at ${roomId} && ${messageId}`);
+        // })
     }
     setSelectedRoomId = (room) => {
         console.log('id here in content: ', room.roomId);
-        if (room.roomId !== this.state.selectedRoom.roomId)
-        {
+        if (room.roomId !== this.state.selectedRoom.roomId) {
             this.setState({
                 selectedRoom: room,
                 showMessagePanel: true
@@ -118,14 +109,14 @@ class Content extends Component {
     }
     onSwitchMode = (value) => {
         this.setState({
-            switchmode : value
+            switchmode: value
         })
     }
     onChangeColor = (color) => {
         this.setState({
             colorTheme: color
         });
-    } 
+    }
     render() {
         let { userId } = this.props;
         let { selectedRoom, onNewMessageArrival, onlineRooms, showMessagePanel, switchmode, colorTheme } = this.state;
@@ -133,7 +124,7 @@ class Content extends Component {
 
         return (
             <div className={switchmode ? 'bodyDark' : ''}>
-                <Header userId={userId} onSwitchMode={this.onSwitchMode}/>
+                <Header userId={userId} onSwitchMode={this.onSwitchMode} />
                 <div className="container-fluid p-0">
                     <div className="content">
                         <div className="row m-0">
@@ -141,35 +132,35 @@ class Content extends Component {
                                 <RoomPanel
                                     getOnlineRooms={this.getOnlineRooms}
                                     userId={userId}
-                                    onlineRooms={onlineRooms}
                                     onNewMessageArrival={onNewMessageArrival}
                                     setSelectedRoomId={this.setSelectedRoomId}
                                     socket={socket}
+                                    onlineRooms={onlineRooms}
                                 />
                             </div>
-                            
+
                             {showMessagePanel ?
                                 <div className='col-sm-9 p-0 content-mid'>
                                     <div className="row m-0">
-                                        <div className='col-sm-8 p-0 content-mid'>                     
-                                                <MessagesPanel
-                                                    socket={socket}
-                                                    userId={userId}
-                                                    selectedRoom={selectedRoom}
-                                                    onNewMessageArrival={onNewMessageArrival}
-                                                    switchmode={switchmode}
-                                                    colorTheme={colorTheme}
-                                                />
+                                        <div className='col-sm-8 p-0 content-mid'>
+                                            <MessagesPanel
+                                                socket={socket}
+                                                userId={userId}
+                                                selectedRoom={selectedRoom}
+                                                onNewMessageArrival={onNewMessageArrival}
+                                                switchmode={switchmode}
+                                                colorTheme={colorTheme}
+                                            />
                                         </div>
                                         <div className='col-sm-4 p-0 content-right'>
-                                            <ContentRight selectedRoom={selectedRoom} onChangeColor={this.onChangeColor}/>
+                                            <ContentRight selectedRoom={selectedRoom} onChangeColor={this.onChangeColor} />
                                         </div>
                                     </div>
                                 </div>
                                 :
                                 <div className='col-sm-9 p-0 content-mid'>
-                                    <Welcome />  
-                                </div> 
+                                    <Welcome />
+                                </div>
                             }
                         </div>
                     </div>

@@ -55,14 +55,22 @@ var CreateMessage =  function (roomID, From, Type, Body, time, done) {
         Type: Type,
         Body: Body,
         time: time,
-        seen: [From]
+        seen: []
     }
     GetRoomByID(roomID, function (err1,data) {
         if (err1) {return done(err1,null)}
         else{
             data.messages.push(message);
-            data.save(function (err, doc) {
-                return done(err,message)
+            data.save(function (err, savedRoom) {
+                let messages=savedRoom.messages
+                messages.forEach((msg)=>{
+                    let t=new Date(message.time)
+                    if (msg.time.toString()==t.toString()){
+                        //console.log("ok")
+                        msg.roomId=roomID
+                        return done(err,msg)
+                    }
+                })
             })
         }
     })    
@@ -179,7 +187,7 @@ const markAsSeen=function(roomId, messageId, userId, callback){
                     if (index==-1){
                         Room.update(
                             {'messages._id': messageId},
-                            {$set:{'messages.seen':[...messages[i].seen,ObjectId(userId)]}},
+                            {$set:{'messages.$.seen':[...messages[i].seen,ObjectId(userId)]}},
                             callback
                         )
                     }else{
