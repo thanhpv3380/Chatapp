@@ -190,6 +190,7 @@ const markAsSeen=function(roomId, messageId, userId, callback){
                             {$set:{'messages.$.seen':[...messages[i].seen,ObjectId(userId)]}},
                             callback
                         )
+                        break
                     }else{
                         callback(`Error User ${userId} have seen message ${messageId}`, room)
                     }

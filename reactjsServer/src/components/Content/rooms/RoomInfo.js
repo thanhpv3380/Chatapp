@@ -12,7 +12,7 @@ class RoomInfo extends Component {
     render() {
         let allConstants = this.allConstants;
         let { room } = this.props;
-        //console.log(room.lastMessage);
+        console.log(room);     
         let lastMessage = room.lastMessage !== null ? room.lastMessage : { "Body": "", "time": "" };
         let time =  allConstants.formatDates(lastMessage.time);
         return (
@@ -20,7 +20,7 @@ class RoomInfo extends Component {
                 <div className="chat_img"> <img src={room.avatar} className="img-circle" alt="avatar user" width="40px" height="40px" /> </div>
                 <div className="chat_ib">
                     <h5>{room.name}<div className={room.online ? 'user-status' : ''}></div><span className="chat_date">{time}</span></h5>
-                    <p>{lastMessage.Body}</p>
+                    <p>{lastMessage.Type === "Text" ? lastMessage.Body : "[Sticker]"}</p>
                 </div>
             </div>
             

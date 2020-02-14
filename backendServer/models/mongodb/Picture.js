@@ -97,7 +97,7 @@ var GetAllAvatar = function(done){
     })
 }
 
-// insert("Sticker", "","QooBee",(err, data)=>{console.log(err, data)})
+//insert("Avatar", "","",(err, data)=>{console.log(data)})
 
 module.exports = {
     Picture,

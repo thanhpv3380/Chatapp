@@ -39,7 +39,8 @@ router.route('/rooms')
                                                     "name": room.name,
                                                     "members": room.members,
                                                     "lastMessage": room.messages.length > 0 ? room.messages.reduce((nearestMessage, cur) => cur.time > nearestMessage.time ? cur : nearestMessage) : null,
-                                                    "online": room.online
+                                                    "online": room.online,
+                                                    "messageCount": room.messages.length
                                                 }
                                             })
                                         })

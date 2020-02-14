@@ -22,17 +22,22 @@ class MessagesPanel extends Component {
     }
     componentDidMount() {
         this.props.socket.on("seen", ({ userId, messageId, roomId }) => {
-            console.log(`get Seen message from ${userId} at ${roomId}`);
+            console.log(`get Seen message from ${userId} at ${roomId} && ${messageId}`);
             let messages = this.state.messages;
             for (let i in messages[roomId]){
-                if (messages[roomId][i]._id === messageId){
+                if (messages[roomId][i].messageId === messageId){
                     messages[roomId][i].seen.push(userId);
                 }
             }
+            // if (userId !== this.props.userId){
+            //     let read = this.state.read;
+            //     read[roomId] = messageId;
+            //     this.setState({ read });        
+            //     console.log("read:", read);
+            // }
             this.setState({
                 messages
             })
-
         });
         let allConstants = this.allConstants;
         axios({
@@ -50,21 +55,21 @@ class MessagesPanel extends Component {
             console.log(err);
         });
         if (this.props.selectedRoom.roomId !== '')
-            this.loadConversation(this.props.selectedRoom.roomId, 10, new Date());
+            this.loadConversation(this.props.selectedRoom.roomId, 100, new Date());
     }
     componentWillReceiveProps(nextProps) {
         
         if (this.props.selectedRoom.roomId !== nextProps.selectedRoom.roomId) {
-            console.log("change roomId", nextProps.selectedRoom.roomId);
+            //console.log("change roomId", nextProps.selectedRoom.roomId);
             if (!this.state.messages[nextProps.selectedRoom.roomId]) {
-                this.loadConversation(nextProps.selectedRoom.roomId, 10, new Date());
+                this.loadConversation(nextProps.selectedRoom.roomId, 100, new Date());
             }
         }
         else {
-            if (nextProps.onNewMessageArrival.roomId === this.props.selectedRoom.roomId && nextProps.switchmode === this.props.switchmode && nextProps.colorTheme === this.props.colorTheme) {
+            if (nextProps.onNewMessageArrival !== this.props.onNewMessageArrival && nextProps.switchmode === this.props.switchmode && nextProps.colorTheme === this.props.colorTheme) {
                 let messages = this.state.messages;
                 //console.log("o day");
-                messages[this.props.selectedRoom.roomId].push(nextProps.onNewMessageArrival);
+                messages[nextProps.onNewMessageArrival.roomId].push(nextProps.onNewMessageArrival);
                 this.setState({ messages });
             }
         }
@@ -83,11 +88,12 @@ class MessagesPanel extends Component {
                 time: time
             }
         }).then((res) => {
-            //console.log('conversation is now: ', res.data);
+            console.log('conversation is now: ', res.data);
             if (res.data.status) {
                 let newRooms = res.data.messages;
                 let messages = this.state.messages;
                 messages[selectedRoomId] = newRooms;
+                
                 this.setState({
                     messages
                 });
@@ -96,39 +102,41 @@ class MessagesPanel extends Component {
             console.log(err);
         });
     }
-    reachTop = () => {
-        //let time = new Date(this.state.messages[this.props.selectedRoom.roomId][0].time);
-        // let allConstants = this.allConstants;
-        // axios({
-        //     method: 'POST',
-        //     url: allConstants.getConversation,
-        //     data: {
-        //         roomId: this.props.selectedRoom.roomId,
-        //         limit: 10,
-        //         time: this.state.messages[this.props.selectedRoom.roomId][0].time
-        //     }
-        // }).then((res) => {
-        //     //console.log('conversation is now: ', res.data);
-        //     if (res.data.status) {
-        //         let newRooms = res.data.messages;
+    // reachTop = () => {
+    //     console.log("reach top");
+    //     //let time = new Date(this.state.messages[this.props.selectedRoom.roomId][0].time);
+    //     let allConstants = this.allConstants;
+    //     axios({
+    //         method: 'POST',
+    //         url: allConstants.getConversation,
+    //         data: {
+    //             roomId: this.props.selectedRoom.roomId,
+    //             limit: 10,
+    //             time: this.state.messages[this.props.selectedRoom.roomId][0].time
+    //         }
+    //     }).then((res) => {
+    //         //console.log('conversation is now: ', res.data);
+    //         if (res.data.status) {
+    //             let newRooms = res.data.messages;
                 
-        //         let messages = this.state.messages;
-        //         for (let i in messages[this.props.selectedRoom.roomId]){
-        //             newRooms.push(messages[this.props.selectedRoom.roomId][i]);
-        //         }
-        //         messages[this.props.selectedRoom.roomId] = newRooms;
-        //         this.setState({
-        //             messages
-        //         });
-        //     }
-        // }).catch(err => {
-        //     console.log(err);
-        // });
-    }
+    //             let messages = this.state.messages;
+    //             for (let i in messages[this.props.selectedRoom.roomId]){
+    //                 newRooms.push(messages[this.props.selectedRoom.roomId][i]);
+    //             }
+    //             messages[this.props.selectedRoom.roomId] = newRooms;
+    //             console.log(newRooms);
+    //             this.setState({
+    //                 messages
+    //             });
+    //         }
+    //     }).catch(err => {
+    //         console.log(err);
+    //     });
+    // }
     render() {
         let { messages, stickers } = this.state;
         let { userId, selectedRoom, socket, colorTheme} = this.props;
-        //console.log(messages);
+        console.log(messages);
         return (
             <div>
                 <div className="user-current" >
